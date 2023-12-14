@@ -1,0 +1,15 @@
+<AppIconButton Icon="delete" ButtonStyle="ButtonStyle.Danger"
+               Click="@(() => Click.InvokeAsync())"
+               Disabled="Disabled"
+               ToolTipText="Deletar"/>
+
+@code {
+
+	[Parameter]
+	public bool Disabled { get; set; }
+
+	[Parameter]
+	public EventCallback Click { get; set; }
+
+
+}

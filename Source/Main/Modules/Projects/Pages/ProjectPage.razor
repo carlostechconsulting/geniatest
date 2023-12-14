@@ -1,0 +1,64 @@
+@page "/project/{ProjectId?}"
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Data.Repository
+@using GeniaWebApp.Source.Main.Modules.Projects.Components
+@using GeniaWebApp.Extentions
+
+<PageTitle>Dados do Projeto</PageTitle>
+
+<RadzenRow JustifyContent="JustifyContent.Stretch" class="mb-4">
+	<RadzenBreadCrumb>
+		<RadzenBreadCrumbItem Path="/" Text="Inicio"/>
+		<RadzenBreadCrumbItem Path="/projects" Text="Lista de projetos"/>
+		<RadzenBreadCrumbItem
+			Text="@($"{(string.IsNullOrEmpty(ProjectId) ? "Novo Produto" : $"Produto {@Project?.Name}")}")"/>
+	</RadzenBreadCrumb>
+</RadzenRow>
+
+<RadzenCard>
+	<ProjectForm Project="Project" IsNew="@(string.IsNullOrEmpty(ProjectId))"/>
+</RadzenCard>
+
+@inject ProjectRepo ProjectRepo
+@inject NotificationService NotificationService
+
+@code {
+
+	/*
+     * Component parameters
+     */
+
+	[Parameter]
+	public string? ProjectId { get; set; }
+
+	/*
+     * Component state
+     */
+	private Project Project { get; set; } = new();
+
+	/**
+     * Component Life Cycle
+     */
+	protected override Task OnInitializedAsync()
+	{
+		if (!ProjectId.HasAny())
+			return Task.CompletedTask;
+
+		return ProjectRepo.GetProjectWithChildrenById(long.Parse(ProjectId))
+			.ContinueWith(task =>
+			{
+				if (task.Exception is not null)
+				{
+					NotificationService.Notify(new NotificationMessage()
+					{
+						Duration = 3000,
+						Summary = "Erro ao carregar projeto!" + task.Exception.Message,
+						Severity = NotificationSeverity.Error
+					});
+				}
+				Project = task.Result;
+				return task.Result;
+			});
+	}
+
+}

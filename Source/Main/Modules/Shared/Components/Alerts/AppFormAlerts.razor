@@ -1,0 +1,14 @@
+@using GeniaWebApp.Extentions
+<RadzenRow Visible="AlertMessages.HasAny()" JustifyContent="JustifyContent.Stretch" class="mb-3">
+	<RadzenAlert AllowClose="false" AlertStyle="AlertStyle.Danger"
+	             Variant="Variant.Flat" Shade="Shade.Lighter">
+		@((MarkupString)string.Join("<br/>", AlertMessages))
+	</RadzenAlert>
+</RadzenRow>
+
+@code {
+
+	[Parameter]
+	public ICollection<string> AlertMessages { get; set; } = new List<string>();
+
+}

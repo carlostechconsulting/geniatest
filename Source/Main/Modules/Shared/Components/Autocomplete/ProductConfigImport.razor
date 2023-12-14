@@ -1,0 +1,43 @@
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Data.Repository
+<RadzenFormField Text="Importar Produto">
+	<RadzenDropDownDataGrid AllowClear="true" @bind-Value=Value AllowVirtualization="true"
+	                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+	                        AllowFiltering="true" Data=@Options TextProperty="Name" Change="OnChange"/>
+</RadzenFormField>
+
+@inject ProductConfigRepo repository
+
+@code {
+	IQueryable<ProductConfig> Options;
+
+	[Parameter]
+	public ProductConfig Value { get; set; }
+
+	[Parameter]
+	public EventCallback<ProductConfig> OnValueChanged { get; set; }
+
+	protected async override Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		Query query = new() { Expand = "SeasonalitiesMonthData" };
+		Options = await repository.GetProductConfigsWithChildren();
+		try
+		{
+			var productConfigs = Options.ToList();
+			Console.Write(productConfigs);
+		}
+		catch
+			(Exception
+			e)
+		{
+			Console.WriteLine(e);
+		}
+	}
+
+	void OnChange()
+	{
+		OnValueChanged.InvokeAsync(Value);
+	}
+
+}

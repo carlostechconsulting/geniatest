@@ -1,0 +1,64 @@
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Modules.Products.Services
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Autocomplete
+<RadzenCard >
+	<ProductSelector SetDefault="true" OnValueChanged="OnProductSelected"/>
+	<RadzenChart Style="max-height: 250px">
+		<RadzenDonutSeries Data="@Data"
+		                   CategoryProperty="Title"
+		                   ValueProperty="Value"
+		                   TotalAngle="180"
+		                   Fills="colors"
+		                   Strokes="colors"
+		                   StartAngle="180">
+			<ChildContent>
+				<RadzenSeriesDataLabels/>
+			</ChildContent>
+			<TitleTemplate>
+				<div class="rz-donut-content" style="font-size: 11pt">
+					<div>Shares <b>%</b></div>
+					<div>por Produto</div>
+				</div>
+			</TitleTemplate>
+		</RadzenDonutSeries>
+	</RadzenChart>
+</RadzenCard>
+@inject ProductShareService ProductShareService
+
+@code {
+	List<DataItem> Data = new();
+
+	List<string> colors = new() { "#afaf05", "darkgreen" };
+
+	class DataItem
+	{
+		public string Title { get; set; }
+		public decimal? Value { get; set; }
+	}
+
+	private void OnProductSelected(Product product)
+	{
+
+		if (product == null)
+		{
+			Data = new List<DataItem>();
+			return;
+		}
+
+		var prod = ProductShareService.CalculateSharesByProduct(product);
+		Data = new List<DataItem>()
+		{
+			new()
+			{
+				Title = "Recepção",
+				Value = prod.ReceptionShare
+			},
+			new()
+			{
+				Title = "Expedição",
+				Value = prod.ExpeditionShare
+			}
+		};
+	}
+
+}

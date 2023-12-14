@@ -1,0 +1,99 @@
+﻿@using GeniaWebApp.Source.Main.Modules.Seasonalities.Components
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Modules.Products.Services
+@using GeniaWebApp.Source.Main.Modules.Shared.Utils
+<RadzenCard>
+	<RadzenRow JustifyContent="JustifyContent.Stretch">
+		<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="2" SizeLG="2" SizeXL="2" SizeXX="2">
+			<RadzenText TextStyle="TextStyle.H5" Text="@(Product.Name)"/>
+		</RadzenColumn>
+	</RadzenRow>
+	<RadzenRow JustifyContent="JustifyContent.Stretch" class="row-container">
+		<RadzenColumn Size="12">
+			<RadzenFieldset Text="Sazonalidade" class="share-container">
+				<SeazonalityChartCard Seasonality="Product.Seasonality"/>
+			</RadzenFieldset>
+		</RadzenColumn>
+	</RadzenRow>
+	<RadzenRow JustifyContent="JustifyContent.Stretch" Style="margin-top: 15px">
+		<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="4" SizeLG="4" SizeXL="4" SizeXX="4">
+			<RadzenFieldset IconColor="darkgreen" Icon="keyboard_double_arrow_down" Text="Share Recepção" class="share-container">
+				@(Product.ReceptionShare)%
+			</RadzenFieldset>
+		</RadzenColumn>
+		<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="4" SizeLG="4" SizeXL="4" SizeXX="4">
+			<RadzenFieldset IconColor="#afaf05" Icon="keyboard_double_arrow_up" Text="Share Expedição" class="share-container">
+				@(Product.ExpeditionShare)%
+			</RadzenFieldset>
+		</RadzenColumn>
+	</RadzenRow>
+</RadzenCard>
+
+
+<style>
+ .share-container{
+ text-align: center;
+ }
+ .row-container{
+    margin-top: 20px;
+ }
+</style>
+@inject TooltipService TooltipService
+@inject ProductShareService ProductShareService
+
+@code {
+
+	[Parameter]
+	public Product Product { get; set; }
+
+	[Parameter]
+	public bool IsReadyOnly { get; set; }
+
+	// Inject depedencies from scope: make sure you defined in Program.cs
+	[Inject]
+	protected NotificationService NotificationService { get; set; }
+
+	// life cycle
+	protected override Task OnInitializedAsync()
+	{
+		try
+		{
+			Product = ProductShareService.CalculateSharesByProduct(Product);
+		}
+		catch (Exception e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 15000,
+				Payload = { },
+				Severity = NotificationSeverity.Error,
+				Summary = "Validação de Share",
+				Detail = e.Message
+			});
+		}
+		return Task.CompletedTask;
+	}
+
+	// others
+
+	void OnChange(string value, string name)
+	{
+	}
+
+	void OnClick(string value)
+	{
+		NotificationService.Notify(new NotificationMessage()
+		{
+			Duration = 3000,
+			Payload = { },
+			Severity = NotificationSeverity.Success
+		});
+	}
+
+	void ShowTooltip(ElementReference elementReference, string text) => TooltipService
+		.Open(
+			elementReference,
+			text,
+			ToolTipDefaultConfig.GetTooltipOptions());
+
+}

@@ -1,0 +1,307 @@
+﻿@using GeniaWebApp.Resource
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Buttons
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Dialog
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Data.Repository
+@using GeniaWebApp.Source.Main.Exceptions
+@using GeniaWebApp.Source.Main.Exceptions.SeasonalityCalculation
+@using GeniaWebApp.Source.Main.Modules.ProductsConfig.Services
+@using GeniaWebApp.Source.Main.Modules.Seasonalities.Services
+@using GeniaWebApp.Source.Main.Modules.Seasonalities.Components
+@using GeniaWebApp.Source.Main.Modules.Shared.Utils
+@using GeniaWebApp.Source.Main.Modules.Shared.Utils.Dialogs
+@using GeniaWebApp.Source.Main.Modules.Shared.Utils
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Alerts
+@using GeniaWebApp.Extentions
+
+<RadzenCard>
+	<AppFormAlerts AlertMessages="AlertMessages"/>
+	<RadzenRow JustifyContent="JustifyContent.Stretch">
+		<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="2" SizeLG="2" SizeXL="2" SizeXX="2">
+			<RadzenFormField Text="Produto">
+				<RadzenTextBox Name="InputName" @bind-Value=@ProductConfig.Name Style="min-width: 100px"/>
+			</RadzenFormField>
+		</RadzenColumn>
+		<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="10" SizeLG="10" SizeXL="10" SizeXX="10">
+			<RadzenRow JustifyContent="JustifyContent.End">
+				<RadzenColumn Size="2" SizeXS="2" SizeSM="2" SizeMD="1" SizeLG="1" SizeXL="1" SizeXX="1">
+					<RadzenButton
+						IconColor="@(SeasonalityLocked ? "gray" : "#3F3D88")"
+						Variant="Variant.Flat"
+						Click="changedMonth => ChangeSeasonalityLockState()"
+						Icon="@(SeasonalityLocked ? "lock_outline" : "lock_open")" ButtonStyle="ButtonStyle.Light"
+						MouseEnter="@(args => ShowTooltip(args, SeasonalityLocked ? "Desbloquear" : "Bloquear"))"/>
+				</RadzenColumn>
+				<RadzenColumn Size="2" SizeXS="2" SizeSM="2" SizeMD="1" SizeLG="1" SizeXL="1" SizeXX="1">
+					<RadzenButton
+						Variant="Variant.Filled"
+						Click="changedMonth => ShowResetConfirmation(ProductConfig)"
+						Icon="restore_page"ButtonStyle="ButtonStyle.Warning"
+						MouseEnter="@(args => ShowTooltip(args, "Resetar Sazonalidade"))"/>
+				</RadzenColumn>
+				@if (!IsNew)
+				{
+					<RadzenColumn Size="2" SizeXS="2" SizeSM="2" SizeMD="1" SizeLG="1" SizeXL="1" SizeXX="1">
+						<AppDeleteButton Click="changedMonth => ShowRemoveConfirmation(ProductConfig)"/>
+					</RadzenColumn>
+				}
+				<RadzenColumn Size="2" SizeXS="2" SizeSM="2" SizeMD="1" SizeLG="1" SizeXL="1" SizeXX="1">
+					<AppSaveButton Click="changedMonth => ShowSaveConfirmation(ProductConfig)"/>
+				</RadzenColumn>
+			</RadzenRow>
+		</RadzenColumn>
+
+	</RadzenRow>
+	<RadzenRow JustifyContent="JustifyContent.Stretch" class="row-container">
+		<RadzenColumn Size="12">
+			<RadzenFieldset Text="Sazonalidade" class="share-container">
+				<SeasonalityCard Seasonality="ProductConfig.Seasonality" OnPercentageChanged="OnSeasonalityChanged"/>
+			</RadzenFieldset>
+		</RadzenColumn>
+	</RadzenRow>
+</RadzenCard>
+
+<style>
+ .share-container{
+ text-align: center;
+ }
+ .row-container{
+    margin-top: 20px;
+ }
+</style>
+
+@inject DialogService DialogService
+@inject IStringLocalizer<AppLang> Trans
+@inject ProductConfigRepo ProductConfigRepo
+@inject NavigationManager NavigationManager;
+@inject TooltipService tooltipService
+@inject ProductConfigService ProductConfigService
+@inject NotificationService NotificationService
+@inject SeasonalityMonthDataService SeasonalityMonthDataService
+
+@code {
+
+	[Parameter] public ProductConfig ProductConfig { get; set; }
+
+	[Parameter] public bool IsNew { get; set; }
+
+	[Parameter] public EventCallback<ProductConfig> OnChanged { get; set; }
+
+	/*
+	 * Component state
+	 */
+	private bool SeasonalityLocked { get; set; } = true;
+	string value;
+	ICollection<string> AlertMessages = new List<string>();
+	// others
+
+	void ShowTooltip(ElementReference elementReference, string text) => tooltipService
+		.Open(
+			elementReference,
+			text,
+			ToolTipDefaultConfig.GetTooltipOptions());
+
+	void ChangeSeasonalityLockState()
+	{
+		SeasonalityLocked = !SeasonalityLocked;
+		foreach (var seasonalityMonthData in ProductConfig.Seasonality.SeasonalitiesMonthData)
+		{
+			seasonalityMonthData.Changeable = !SeasonalityLocked;
+		}
+	}
+
+	void OnChange(string value, string name)
+	{
+	}
+
+	void OnClick(string value)
+	{
+	}
+
+	void ResetSeasonalityPercentages(DialogService ds)
+	{
+		try
+		{
+			ProductConfig.Seasonality.SeasonalitiesMonthData = SeasonalityMonthDataService
+				.ResetPercentagesToDefault(ProductConfig.Seasonality.SeasonalitiesMonthData?.ToList());
+			ds.Close();
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 8000,
+				Summary = "Sazonalidade recalculada com sucesso",
+				Severity = NotificationSeverity.Success,
+			});
+		}
+		catch (Exception e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 8000,
+				Summary = "Erro ao tentar recalcular Sazonalidades",
+				Severity = NotificationSeverity.Success,
+			});
+		}
+	}
+
+	async Task OnSeasonalityChanged(SeasonalityMonthData changedMonth)
+	{
+		try
+		{
+			ProductConfig.Seasonality.SeasonalitiesMonthData = SeasonalityMonthDataService.Recalculate(
+				ProductConfig.Seasonality.SeasonalitiesMonthData.ToList(),
+				changedMonth
+			);
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 8000,
+				Summary = "Sazonalidade recalculada com sucesso",
+				Severity = NotificationSeverity.Success,
+			});
+		}
+		catch (SeasonalityRecalculationException e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 8000,
+				Summary = "Validação",
+				Detail = Trans[e.TransKey],
+				Severity = NotificationSeverity.Error,
+			});
+		}
+	}
+
+	/**
+     *
+     */
+	protected async Task ShowResetConfirmation(ProductConfig ProductConfig)
+	{
+		await DialogService.OpenAsync(Trans[ActionDialogsUtils.CONFIRMATION_DIALOG_TITLE_TRANS_KEY], ds =>
+				@<ActionConfirmationDialog
+					 Text=@($"<p>Deseja realmente reconfigurar os TODOS os valores de sazoanlidade do produto <strong>{ProductConfig.Name}</strong> para o valor padrão?</p>")
+					 Canceled="@(v => ds.Close())"
+					 Confirmed="@(v => ResetSeasonalityPercentages(ds))"/>,
+			ActionDialogsUtils.DIALOG_OPTIONS);
+	}
+
+	protected async Task ShowSaveConfirmation(ProductConfig ProductConfig)
+	{
+		if (!AreInputsValid())
+			return;
+
+		var msg = ProductConfig.Id.HasValue ? "atualizar" : "criar";
+
+		await DialogService.OpenAsync(Trans[ActionDialogsUtils.CONFIRMATION_DIALOG_TITLE_TRANS_KEY], ds =>
+				@<ActionConfirmationDialog
+					 Text=@($"<p>Deseja {msg} produto <strong>{ProductConfig.Name}</strong>?</p>")
+					 Canceled="@(v => ds.Close())"
+					 Confirmed="@(v => SaveProduct(ds))"/>,
+			ActionDialogsUtils.DIALOG_OPTIONS);
+	}
+
+
+	protected async Task ShowRemoveConfirmation(ProductConfig ProductConfig)
+	{
+		await DialogService.OpenAsync(Trans[ActionDialogsUtils.CONFIRMATION_DIALOG_TITLE_TRANS_KEY], ds =>
+				@<ActionConfirmationDialog
+					 Text=@($"<p>Deseja realmente remover o produto <strong>{ProductConfig.Name}</strong>?</p>")
+					 Canceled="@(v => ds.Close())"
+					 Confirmed="@(v => RemoveProduct(ds))"/>,
+			ActionDialogsUtils.DIALOG_OPTIONS);
+	}
+
+	async Task RemoveProduct(DialogService ds)
+	{
+		try
+		{
+			ProductConfigService.DeleteAndCascade(ProductConfig);
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 5000,
+				Payload = { },
+				Summary = "Sucesso",
+				Detail = $"Produto '{ProductConfig.Name}' removido com sucesso",
+				Severity = NotificationSeverity.Success,
+			});
+			ds.Close();
+			OnChanged.InvokeAsync();
+		}
+		catch (Exception e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 5000,
+				Payload = { },
+				Summary = "Erro",
+				Detail = $"Erro ao tentar remover o produto '{ProductConfig.Name}', tente novamente mais tarde",
+				Severity = NotificationSeverity.Error
+			});
+		}
+	}
+
+	async Task SaveProduct(DialogService ds)
+	{
+		try
+		{
+			if (IsNew)
+			{
+				await ProductConfigService.Create(ProductConfig);
+			}
+			else
+			{
+				await ProductConfigService.Update(ProductConfig);
+			}
+			ds.Close();
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 5000,
+				Payload = { },
+				Summary = "Sucesso",
+				Detail = $"Produto '{ProductConfig.Name}' atualizado com sucesso",
+				Severity = NotificationSeverity.Success,
+			});
+			OnChanged.InvokeAsync(ProductConfig);
+		}
+		catch (GeniaConstraintException e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 5000,
+				Payload = { },
+				Summary = "Erro",
+				Detail = Trans[e.TransKey],
+				Severity = NotificationSeverity.Error
+			});
+		}
+		catch (Exception e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 8000,
+				Payload = { },
+				Summary = "Erro",
+				Detail = $"Erro ao tentar atualizar o produto '{ProductConfig.Name}', tente novamente mais tarde",
+				Severity = NotificationSeverity.Error
+			});
+		}
+
+		// duplicate key value violates unique constraint "product_config_pkey"
+		ds.Close();
+	}
+
+	private bool AreInputsValid()
+	{
+		AlertMessages.Clear();
+		ProductConfig.Name.IfHasContentOrElse(
+			(v) => { },
+			() => AlertMessages.Add("<li><b>Nome</b> é obrigatório</li>"));
+
+		StateHasChanged();
+		return AlertMessages.Empty();
+	}
+
+	private void CleanValidation()
+	{
+		AlertMessages.Clear();
+	}
+
+}

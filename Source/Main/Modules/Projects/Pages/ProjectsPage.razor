@@ -1,0 +1,180 @@
+@page "/projects"
+@using GeniaWebApp.Resource
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Modules.Projects.Services
+@using GeniaWebApp.Source.Main.Modules.Shared.Utils.Dialogs
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Buttons
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Dialog
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Text
+
+<PageTitle>Projetos</PageTitle>
+
+<RadzenRow JustifyContent="JustifyContent.Stretch" class="mb-4">
+	<RadzenBreadCrumb>
+		<RadzenBreadCrumbItem Path="/" Text="Inicio"/>
+		<RadzenBreadCrumbItem Text="Configurações de produtos"/>
+	</RadzenBreadCrumb>
+</RadzenRow>
+<RadzenCard>
+	<AppPageContentTitle Title="Projetos"/>
+
+	<RadzenRow JustifyContent="JustifyContent.Stretch">
+		<RadzenColumn Size="12">
+			<RadzenDataGrid
+				@ref="RadzenDataGridRef"
+				AllowFiltering="true"
+				AllowColumnResize="true"
+				FilterMode="FilterMode.Simple"
+				AllowSorting="true"
+				PageSize="10"
+				AllowPaging="true"
+				PagerHorizontalAlign="HorizontalAlign.Right"
+				SelectionMode="DataGridSelectionMode.Single"
+				@bind-Value=@SelectedProjects
+				ShowPagingSummary="false"
+				ShowEmptyMessage="true"
+				Density="Density.Compact"
+				PagerPosition="PagerPosition.TopAndBottom"
+				EmptyText="Vazio."
+				Data="@Projects" TItem="Project">
+				<Columns>
+					<RadzenDataGridColumn TItem="Project" Title="Ações" Frozen="true" Sortable="false" Filterable="true" TextAlign="TextAlign.Justify">
+						<FilterTemplate Context="data">
+							<AppAddButton Click="@(() => NavigationManager.NavigateTo("/project"))"/>
+						</FilterTemplate>
+						<Template Context="data">
+							<RadzenRow JustifyContent="JustifyContent.Stretch">
+								<AppVisualizeButton Click="@(() => NavigationManager.NavigateTo($"/project/{data.Id}"))"/>
+								<AppDeleteButton Click="@(v => ShowRemoveConfirmation(data))"/>
+								<AppIconButton Icon="miscellaneous_services"
+								               Click="@(() => NavigationManager.NavigateTo($"/products-modeling/{data.Id}"))"
+								               ButtonStyle="ButtonStyle.Light"
+								               ToolTipText="Ir para configurações de produtos"/>
+							</RadzenRow>
+
+						</Template>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="Project" Property="Name" Title="Nome" MinWidth="160px"
+					                      TextAlign="TextAlign.Justify"/>
+					<RadzenDataGridColumn TItem="Project" Property="Description" Title="Descrição" MinWidth="160px"
+					                      TextAlign="TextAlign.Justify"/>
+					<RadzenDataGridColumn TItem="Project" Title="Produtos" Sortable="false" Filterable="false"
+					                      MinWidth="100px" TextAlign="TextAlign.Justify">
+						<Template Context="data">
+							<RadzenRow JustifyContent="JustifyContent.Stretch">
+								@if (data.Products != null)
+								{
+									foreach (var product in data.Products)
+									{
+										<RadzenButton
+											Size="ButtonSize.ExtraSmall"
+											Variant="Variant.Text"
+											Text="@product.Name"/>
+									}
+								}
+							</RadzenRow>
+						</Template>
+					</RadzenDataGridColumn>
+				</Columns>
+			</RadzenDataGrid>
+		</RadzenColumn>
+	</RadzenRow>
+</RadzenCard>
+
+@inject IStringLocalizer<AppLang> Trans
+@inject DialogService DialogService
+@inject ProjectService ProjectService
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+
+@code {
+
+	private static readonly Query QueryDefault = new() { OrderBy = "UpdatedAt desc", Expand = "Products" };
+
+	/*
+	 * Component state
+	 */
+	private IQueryable<Project> Projects;
+	private IList<Project> SelectedProjects;
+	private RadzenDataGrid<Project> RadzenDataGridRef;
+
+	/**
+     * Component Life Cycle
+     */
+	protected override Task OnInitializedAsync()
+	{
+		return FetchData();
+	}
+
+	/**
+     * Fetch Data
+     */
+	private Task FetchData()
+	{
+		return ProjectService.FindAll(QueryDefault)
+			.ContinueWith(task =>
+			{
+				if (task.Exception is not null)
+				{
+					NotificationService.Notify(new NotificationMessage()
+					{
+						Duration = 3000,
+						Summary = "Erro ao carregar os projetos!",
+						Severity = NotificationSeverity.Error
+					});
+				}
+				else
+				{
+					Projects = task.Result;
+				}
+			});
+	}
+
+	/**
+     * Event Handler
+     * Action confirmation On Delete
+     */
+	private async Task ShowRemoveConfirmation(Project project)
+	{
+		await DialogService.OpenAsync(Trans[ActionDialogsUtils.CONFIRMATION_DIALOG_TITLE_TRANS_KEY], ds =>
+				@<ActionConfirmationDialog
+					 Text=@($"<p>Deseja realmente remover o projeto <strong>{project.Name}</strong>?</p>" + $"<p>Todos os Produtos vinculados a sete projeto serão removidos</p>")
+					 Canceled="@(v => ds.Close())"
+					 Confirmed="@(v => Delete(project, ds))"/>,
+			ActionDialogsUtils.DIALOG_OPTIONS);
+	}
+
+	/**
+     * Delete Project
+     */
+	private Task Delete(Project project, DialogService ds)
+	{
+		return ProjectService.Delete(project)
+			.ContinueWith((previousTask) =>
+			{
+				if (previousTask.Exception is not null)
+				{
+					NotificationService.Notify(new NotificationMessage()
+					{
+						Duration = 3000,
+						Summary = "Erro ao carregar os projetos!",
+						Severity = NotificationSeverity.Error
+					});
+				}
+				else
+				{
+					NotificationService.Notify(new NotificationMessage()
+					{
+						Duration = 3000,
+						Summary = "Projeto removido com sucesso!",
+						Severity = NotificationSeverity.Success
+					});
+					ds.Close();
+				}
+
+				RadzenDataGridRef.GoToPage(0);
+				return FetchData();
+			});
+	}
+
+}

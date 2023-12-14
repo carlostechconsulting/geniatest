@@ -1,0 +1,175 @@
+@page "/transporters-config"
+@using GeniaWebApp.Resource
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Modules.TransporterConfig.Services
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Buttons
+@using Microsoft.EntityFrameworkCore
+
+<PageTitle>Configuração de Transportadores</PageTitle>
+
+<RadzenRow JustifyContent="JustifyContent.Stretch" class="mb-4">
+	<RadzenBreadCrumb>
+		<RadzenBreadCrumbItem Path="/" Text="Inicio"/>
+		<RadzenBreadCrumbItem Text="Configurações de Transportadores"/>
+	</RadzenBreadCrumb>
+</RadzenRow>
+<RadzenCard>
+	<RadzenRow JustifyContent="JustifyContent.Start">
+		<RadzenColumn Size="12">
+			<RadzenText TextStyle="TextStyle.DisplayH5" Text="Transportadores"></RadzenText>
+		</RadzenColumn>
+	</RadzenRow>
+	<RadzenRow JustifyContent="JustifyContent.Stretch">
+		<RadzenColumn Size="12">
+			<RadzenDataGrid
+				@ref="RadzenDataGridRef"
+				AllowFiltering="true"
+				AllowColumnResize="true"
+				AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+				AllowSorting="true" PageSize="10"
+				AllowPaging="true"
+				PagerHorizontalAlign="HorizontalAlign.Right"
+				SelectionMode="DataGridSelectionMode.Single"
+				@bind-Value=@SelectedTransporters
+				ShowPagingSummary="false"
+				ShowEmptyMessage="true"
+				FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+				Density="Density.Compact"
+				PagerPosition="PagerPosition.TopAndBottom"
+				EmptyText="Nenhum transportador encontrado."
+				Data="@TransporterQueryable" TItem="Transporter" ColumnWidth="300px">
+				<Columns>
+					<RadzenDataGridColumn TItem="Transporter" Title="Ações" Sortable="false" Frozen="true" Filterable="true" TextAlign="TextAlign.Justify">
+						<FilterTemplate Context="data">
+							<AppAddButton Click="@(() => NavigationManager.NavigateTo("/transporter-config"))"/>
+						</FilterTemplate>
+						<Template Context="data">
+							<RadzenRow JustifyContent="JustifyContent.Stretch">
+								<AppVisualizeButton Click="@(() => NavigationManager.NavigateTo($"/transporter-config/{data.Id}"))"/>
+								<AppDeleteButton Click="() => ShowDeleteConfirmation(data)"/>
+							</RadzenRow>
+						</Template>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="Transporter" Property="Name" Title="Nome" MinWidth="160px" TextAlign="TextAlign.Justify"/>
+					<RadzenDataGridColumn TItem="Transporter" Property="Volume" Filterable="false" Title="Volume (t)" Width="100px" TextAlign="TextAlign.Justify"/>
+					<RadzenDataGridColumn TItem="Transporter" Property="ApplicableModalType" Title="Modal Aplicável" MinWidth="100px" TextAlign="TextAlign.Justify">
+						<Template Context="data">
+							<RadzenBadge BadgeStyle="BadgeStyle.Light" Text="@data.ApplicableModalType.ToString()"/>
+						</Template>
+
+					</RadzenDataGridColumn>
+					@* <RadzenDataGridColumn TItem="Transporter" Title="Dimensões" Sortable="false" Filterable="false"  Width="200px" TextAlign="TextAlign.Center"> *@
+					@*     <Template Context="data"> *@
+					@*         <DimensionCard Dimension="data.Dimension"/> *@
+					@*     </Template> *@
+					@* </RadzenDataGridColumn> *@
+
+				</Columns>
+			</RadzenDataGrid>
+		</RadzenColumn>
+	</RadzenRow>
+</RadzenCard>
+
+
+@inject TransporterService TransporterService
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+@inject IStringLocalizer<AppLang> Trans
+@inject DialogService DialogService
+
+@code {
+	private readonly Query QueryDefault = new() { OrderBy = "UpdatedAt desc" };
+
+
+	/*
+	 * Component state
+	 */
+	private IQueryable<Transporter> TransporterQueryable { get; set; }
+	public IList<Transporter> SelectedTransporters;
+	private RadzenDataGrid<Transporter> RadzenDataGridRef;
+	[Parameter] public bool IsNew { get; set; }
+
+	protected override Task OnInitializedAsync()
+	{
+		return FetchData();
+	}
+
+	/**
+     * Fetches data for data grid
+     */
+	private Task FetchData()
+	{
+		return TransporterService.FindAll(QueryDefault)
+			.ContinueWith(task =>
+			{
+				if (task.Exception is not null)
+				{
+					NotificationService.Notify(new NotificationMessage()
+					{
+						Duration = 3000,
+						Summary = "Erro ao carregar projetos!" + task.Exception.Message,
+						Severity = NotificationSeverity.Error
+					});
+				}
+
+				TransporterQueryable = task.Result;
+				return task.Result;
+			});
+	}
+
+	private async Task Delete(Transporter? entity, DialogService ds)
+	{
+		try
+		{
+			TransporterService.Delete(entity);
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 3000,
+				Summary = "Transportador deletado com sucesso!",
+				Severity = NotificationSeverity.Success
+			});
+			ds.Close();
+			await FetchData();
+			RadzenDataGridRef.GoToPage(0);
+		}
+		//TODO: dont catch data layer exception here, create a exception
+		catch (DbUpdateException e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 3000,
+				Summary = "Erro ao deletar projeto!",
+				Severity = NotificationSeverity.Error
+			});
+		}
+	}
+
+	protected async Task ShowDeleteConfirmation(Transporter Transporter)
+	{
+		await DialogService.OpenAsync("Confirmar", ds =>
+			@<div>
+				<RadzenRow JustifyContent="JustifyContent.Stretch">
+					<RadzenColumn Size="12">
+						<p>Deseja realmente remover o transportador <strong>@Transporter.Name</strong>?</p>
+					</RadzenColumn>
+				</RadzenRow>
+				<RadzenRow JustifyContent="JustifyContent.Center">
+					<RadzenColumn Size="6">
+						<RadzenButton
+							Click=@(v => ds.Close())
+							Size="ButtonSize.Small"
+							Text="@Trans["cancel"]" ButtonStyle="ButtonStyle.Light"/>
+					</RadzenColumn>
+					<RadzenColumn Size="6">
+						<RadzenButton
+							Style="float: right"
+							Size="ButtonSize.Small"
+							Click=@(v => Delete(Transporter, ds))
+
+							Text="@Trans["applyChanges"]" ButtonStyle="ButtonStyle.Danger"/>
+		</RadzenColumn>
+		</RadzenRow>
+		</div>, new DialogOptions() { CloseDialogOnOverlayClick = false, CloseDialogOnEsc = false, ShowClose = false });
+	}
+
+}

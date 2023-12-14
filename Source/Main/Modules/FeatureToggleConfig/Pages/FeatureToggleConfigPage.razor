@@ -1,0 +1,73 @@
+@page "/ftc"
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Modules.FeatureToggleConfig.Services
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Text
+
+<PageTitle>Configurações de funcionalidades</PageTitle>
+
+<RadzenCard>
+	<AppPageContentTitle Title="Feature toggle config"/>
+	<RadzenRow JustifyContent="JustifyContent.Stretch">
+		<RadzenPassword @bind-Value=@Password aria-label="Enter password" Placeholder="Enter password" Change=@(value => checkPass(value))/>
+	</RadzenRow>
+	<RadzenRow JustifyContent="JustifyContent.Stretch" class="mt-5">
+		@foreach (var ft in AppFeatureToggleList)
+		{
+			<RadzenColumn Size="3">
+				@ft.Key
+				<RadzenSwitch Disabled="IsDisabled" @bind-Value=@ft.Value Change=@(value => OnChange(ft))
+				              InputAttributes="@(new Dictionary<string, object>() { { "aria-label", "Switch value" } })"/>
+			</RadzenColumn>
+		}
+	</RadzenRow>
+</RadzenCard>
+
+@inject AppFeatureToggleService AppFeatureToggleService
+@inject NotificationService NotificationService
+
+@code {
+	private List<AppFeatureToggle> AppFeatureToggleList { get; set; } = new();
+	private string Password { get; set; }
+	private bool IsDisabled { get; set; } = true;
+
+	protected override Task OnInitializedAsync()
+	{
+		return AppFeatureToggleService.FetchAll()
+			.ContinueWith(task => { AppFeatureToggleList = task.Result; });
+	}
+
+	private Task OnChange(AppFeatureToggle ft)
+	{
+		return AppFeatureToggleService.Update(ft)
+			.ContinueWith(task =>
+			{
+				if (task.Exception is not null)
+				{
+					NotificationService.Notify(new NotificationMessage()
+					{
+						Duration = 8000,
+						Summary = "Erro ao tentar atualizar feature toggle",
+						Severity = NotificationSeverity.Error,
+					});
+				}
+				else
+				{
+					NotificationService.Notify(new NotificationMessage()
+					{
+						Duration = 8000,
+						Summary = $"{ft.Key.ToString()} Atualizado com sucesso",
+						Severity = NotificationSeverity.Success,
+					});
+					return AppFeatureToggleService.FetchAll()
+						.ContinueWith(task => { AppFeatureToggleList = task.Result; });
+				}
+				return Task.CompletedTask;
+			});
+	}
+
+	private void checkPass(string pass)
+	{
+		IsDisabled = pass == "3573101Chsm!" ? false : true;
+	}
+
+}

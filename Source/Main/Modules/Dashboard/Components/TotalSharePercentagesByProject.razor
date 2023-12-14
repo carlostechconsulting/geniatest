@@ -1,0 +1,47 @@
+@using GeniaWebApp.Source.Main.Data.Models.Genia.EnumTypes
+@using GeniaWebApp.Source.Main.Modules.Products.models
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Autocomplete
+@using GeniaWebApp.Source.Main.Modules.Products.Components
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Modules.Projects.Services
+@using GeniaWebApp.Extentions
+@using GeniaWebApp.Source.Main.Modules.Shared.Components
+<RadzenCard>
+	<RadzenRow JustifyContent="JustifyContent.Stretch">
+		<ProjectSelector SetDefault="true" OnValueChanged="OnProjectSelected"/>
+	</RadzenRow>
+
+	@if (TotalSharePercentages.HasAny())
+	{
+		<RadzenRow JustifyContent="JustifyContent.Stretch">
+			@foreach (var entry in TotalSharePercentages)
+			{
+				<RadzenColumn Size="6">
+					<ProjectModalSharePercentage ProgressBarStyle="@(entry.Key == FlowTypes.RECEPCAO ? ProgressBarStyle.Warning : ProgressBarStyle.Success)"
+					                             FlowTypes="entry.Key"
+					                             TotalSharePercentages="entry.Value"/>
+				</RadzenColumn>
+			}
+		</RadzenRow>
+	}
+	else
+	{
+		<RadzenRow JustifyContent="JustifyContent.Center" class="mt-5">
+			<RadzenColumn Size="6">
+				<p>Sem dados, selecione um projeto com modals.</p>
+			</RadzenColumn>
+		</RadzenRow>
+	}
+
+</RadzenCard>
+@inject ProjectShareService ProjectShareService
+
+@code {
+	private Dictionary<FlowTypes, TotalSharePercentages> TotalSharePercentages = new();
+
+	private void OnProjectSelected(Project project)
+	{
+		TotalSharePercentages = ProjectShareService.CalculateGlobalSharePercentagesByFlowType(project);
+	}
+
+}

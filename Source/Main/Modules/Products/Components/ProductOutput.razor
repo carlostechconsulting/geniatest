@@ -1,0 +1,59 @@
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+<RadzenRow JustifyContent="JustifyContent.Stretch">
+	Produto
+</RadzenRow>
+<RadzenRow JustifyContent="JustifyContent.Stretch">
+	<table>
+		<thead>
+		<tr>
+			<th class="table-cell">
+				Modal
+			</th>
+			<th class="table-cell">
+				Mês pico
+			</th>
+			<th class="table-cell">
+				Volume Mês pico
+			</th>
+			<th class="table-cell">
+				Recebimento
+			</th>
+			<th class="table-cell">
+				Caminhões por mês
+			</th>
+			<th class="table-cell">
+				Total de moegas
+			</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td class="table-cell">
+				Modal 1
+			</td>
+			<td class="table-cell">
+				Dezembro
+			</td>
+			<td class="table-cell">
+				5000
+			</td>
+			<td class="table-cell">
+				5000
+			</td>
+			<td class="table-cell">
+				5000
+			</td>
+			<td class="table-cell">
+				3
+			</td>
+		</tr>
+		</tbody>
+	</table>
+</RadzenRow>
+
+@code {
+
+	[Parameter]
+	public Product Product { get; set; }
+
+}

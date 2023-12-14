@@ -1,0 +1,46 @@
+@using GeniaWebApp.Source.Main.Data.Models.Genia.EnumTypes
+@using GeniaWebApp.Source.Main.Modules.Products.models
+
+<RadzenFieldset IconColor=@(FlowTypes.EXPEDICAO.Equals(FlowTypes) ? "darkgreen" : "#afaf05")
+                Icon=@(FlowTypes.EXPEDICAO.Equals(FlowTypes) ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down")
+                Text="@(FlowTypes.ToString())">
+	<RadzenRow JustifyContent="JustifyContent.Stretch" class="m-2">
+		<RadzenColumn Size="12">
+			<RadzenProgressBar ProgressBarStyle="ProgressBarStyle"
+			                   Style="@Style"
+			                   Value="@(decimal.ToDouble(TotalSharePercentages.Rodoviario))" Unit="@($"% {ModalTypes.RODOVIARIO.ToString()}")"/>
+		</RadzenColumn>
+		<RadzenColumn Size="12">
+			<RadzenProgressBar ProgressBarStyle="ProgressBarStyle"
+			                   Style="@Style"
+			                   Value="@(decimal.ToDouble(TotalSharePercentages.Ferroviario))" Unit="@($"% {ModalTypes.FERROVIARIO.ToString()}")"/>
+		</RadzenColumn>
+		<RadzenColumn Size="12">
+			<RadzenProgressBar ProgressBarStyle="ProgressBarStyle"
+			                   Style="@Style"
+			                   Value="@(decimal.ToDouble(TotalSharePercentages.Hidroviario))" Unit="@($"% {ModalTypes.HIDROVIARIO.ToString()}")"/>
+		</RadzenColumn>
+		<RadzenColumn Size="12">
+			<RadzenProgressBar ProgressBarStyle="ProgressBarStyle"
+			                   Style="@Style"
+			                   Value="@(decimal.ToDouble(TotalSharePercentages.Maritimo))" Unit="@($"% {ModalTypes.MARITIMO.ToString()}")"/>
+		</RadzenColumn>
+	</RadzenRow>
+</RadzenFieldset>
+
+
+@code {
+
+	readonly string Style = "color: black; font-weight: bold;";
+
+	[Parameter]
+	public FlowTypes FlowTypes { get; set; }
+
+	[Parameter]
+	public ProgressBarStyle ProgressBarStyle { get; set; }
+
+
+	[Parameter]
+	public TotalSharePercentages TotalSharePercentages { get; set; }
+
+}

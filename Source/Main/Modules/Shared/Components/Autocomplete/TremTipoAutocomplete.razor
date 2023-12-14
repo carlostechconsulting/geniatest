@@ -1,0 +1,31 @@
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Data.Repository
+<RadzenFormField Text="Trem Tipo">
+	<RadzenDropDownDataGrid AllowClear="true" @bind-Value=@SelectedValue AllowVirtualization="true"
+	                        AllowFiltering="true" Data=@Options TextProperty="Name" Change="OnChange"/>
+</RadzenFormField>
+
+@inject TremTipoRepo repository
+
+@code {
+	IQueryable<TremTipo> Options;
+
+	[Parameter]
+	public TremTipo? SelectedValue { get; set; }
+
+	[Parameter]
+	public EventCallback<TremTipo> OnValueChange { get; set; }
+
+
+	protected async override Task OnInitializedAsync()
+	{
+		Options = await repository.GetTremTipos();
+	}
+
+	void OnChange()
+	{
+		if(SelectedValue != null)
+			OnValueChange.InvokeAsync(SelectedValue);
+	}
+
+}

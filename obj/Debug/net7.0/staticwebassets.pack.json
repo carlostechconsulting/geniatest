@@ -1,0 +1,69 @@
+{
+  "Files": [
+    {
+      "Id": "/home/cmelo/CARLOS/projects/GeniaWebApp/wwwroot/css/bootstrap/bootstrap.min.css",
+      "PackagePath": "staticwebassets/css/bootstrap/bootstrap.min.css"
+    },
+    {
+      "Id": "/home/cmelo/CARLOS/projects/GeniaWebApp/wwwroot/css/bootstrap/bootstrap.min.css.map",
+      "PackagePath": "staticwebassets/css/bootstrap/bootstrap.min.css.map"
+    },
+    {
+      "Id": "/home/cmelo/CARLOS/projects/GeniaWebApp/wwwroot/css/site.css",
+      "PackagePath": "staticwebassets/css/site.css"
+    },
+    {
+      "Id": "/home/cmelo/CARLOS/projects/GeniaWebApp/wwwroot/favicon.ico",
+      "PackagePath": "staticwebassets/favicon.ico"
+    },
+    {
+      "Id": "/home/cmelo/CARLOS/projects/GeniaWebApp/wwwroot/images/genia-logo.png",
+      "PackagePath": "staticwebassets/images/genia-logo.png"
+    },
+    {
+      "Id": "/home/cmelo/CARLOS/projects/GeniaWebApp/wwwroot/images/genia-logo2.png",
+      "PackagePath": "staticwebassets/images/genia-logo2.png"
+    },
+    {
+      "Id": "/home/cmelo/CARLOS/projects/GeniaWebApp/wwwroot/images/genia-logo3-minimal.png",
+      "PackagePath": "staticwebassets/images/genia-logo3-minimal.png"
+    },
+    {
+      "Id": "/home/cmelo/CARLOS/projects/GeniaWebApp/wwwroot/images/genia-logo3.png",
+      "PackagePath": "staticwebassets/images/genia-logo3.png"
+    },
+    {
+      "Id": "/home/cmelo/CARLOS/projects/GeniaWebApp/wwwroot/images/login.jpg",
+      "PackagePath": "staticwebassets/images/login.jpg"
+    },
+    {
+      "Id": "/home/cmelo/CARLOS/projects/GeniaWebApp/wwwroot/images/logo-login.png",
+      "PackagePath": "staticwebassets/images/logo-login.png"
+    },
+    {
+      "Id": "/home/cmelo/CARLOS/projects/GeniaWebApp/wwwroot/images/logo.png",
+      "PackagePath": "staticwebassets/images/logo.png"
+    },
+    {
+      "Id": "/home/cmelo/CARLOS/projects/GeniaWebApp/wwwroot/js/FileExport.js",
+      "PackagePath": "staticwebassets/js/FileExport.js"
+    },
+    {
+      "Id": "obj/Debug/net7.0/staticwebassets/msbuild.GeniaWebApp.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj/Debug/net7.0/staticwebassets/msbuild.build.GeniaWebApp.props",
+      "PackagePath": "build\\GeniaWebApp.props"
+    },
+    {
+      "Id": "obj/Debug/net7.0/staticwebassets/msbuild.buildMultiTargeting.GeniaWebApp.props",
+      "PackagePath": "buildMultiTargeting\\GeniaWebApp.props"
+    },
+    {
+      "Id": "obj/Debug/net7.0/staticwebassets/msbuild.buildTransitive.GeniaWebApp.props",
+      "PackagePath": "buildTransitive\\GeniaWebApp.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

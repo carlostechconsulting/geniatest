@@ -1,0 +1,56 @@
+@page "/trem-tipo-config/{TremTipoId?}"
+@using GeniaWebApp.Source.Main.Modules.TremTipoConfig.Components
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Modules.TremTipoConfig.Services
+
+<PageTitle>Trem tipo</PageTitle>
+
+<RadzenBreadCrumb class="mb-4">
+	<RadzenBreadCrumbItem Path="/" Text="Inicio"/>
+	<RadzenBreadCrumbItem Path="/trem-tipos-config" Text="Configurações de Trem tipo"/>
+	<RadzenBreadCrumbItem Text="@($"{(string.IsNullOrEmpty(TremTipoId) ? "Novo Trem Tipo" : $"Trem Tipo {@TremTipo?.Name}")}")"/>
+</RadzenBreadCrumb>
+
+<RadzenCard>
+	<RadzenRow JustifyContent="JustifyContent.Stretch" class="mb-3">
+		<RadzenText TextStyle="TextStyle.H6" Text="@($"{(string.IsNullOrEmpty(TremTipoId) ? "Novo Trem Tipo" : $"Trem Tipo {@TremTipo?.Name}")}")"/>
+	</RadzenRow>
+	<TremTipoFormCard TremTipo="@TremTipo"/>
+</RadzenCard>
+
+
+@inject TremTipoService TremTipoService
+@inject NotificationService NotificationService
+
+@code {
+
+	[Parameter]
+	public string? TremTipoId { get; set; }
+
+	public TremTipo TremTipo { get; set; } = new();
+
+	/**
+     * Component Life Cycle
+     */
+	protected override Task OnInitializedAsync()
+	{
+		if (string.IsNullOrEmpty(TremTipoId))
+			return Task.CompletedTask;
+
+		return TremTipoService.GetById(Convert.ToInt64(TremTipoId))
+			.ContinueWith(task =>
+			{
+				if (task.Exception is not null)
+				{
+					NotificationService.Notify(new NotificationMessage()
+					{
+						Duration = 3000,
+						Summary = "Erro ao carregar Trem tipo" + task.Exception.Message,
+						Severity = NotificationSeverity.Error
+					});
+				}
+				TremTipo = task.Result;
+			});
+	}
+
+}

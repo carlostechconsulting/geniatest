@@ -1,0 +1,228 @@
+﻿@using System.Linq.Dynamic.Core
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Data.Models.Genia.EnumTypes
+@using GeniaWebApp.Source.Main.Modules.Modals.Services
+@using GeniaWebApp.Source.Main.Modules.Products.models
+@using GeniaWebApp.Source.Main.Modules.Products.Services
+@using GeniaWebApp.Source.Main.Modules.Projects.Services
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Autocomplete
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Buttons
+
+<RadzenCard class="mb-2 modal-card-style" Style="@(Modal.Id == null ? "border: 3px dotted #41729F;" : "border: 1px dotted grey;")">
+	<RadzenRow JustifyContent="JustifyContent.End">
+		<RadzenAlert Visible="HasError" AllowClose="false" AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter">
+			@AlertMessage
+		</RadzenAlert>
+	</RadzenRow>
+	<RadzenRow JustifyContent="JustifyContent.End">
+		<CommonActionButtonGroup
+			ShowCleanButton
+			OnClean="CleanFormInputs"
+			ShowSaveButton="false"
+			OnSave="Save"
+			IsSaveDisabled="@HasError"
+			ShowDeleteButton
+			OnDelete="Delete"/>
+	</RadzenRow>
+	<RadzenRow JustifyContent="JustifyContent.Stretch" class="mt-2">
+		<RadzenColumn Size="12" SizeXS="12" SizeSM="12" SizeMD="6" SizeLG="4" SizeXL="3" SizeXX="4">
+			<RadzenFormField Text="Modal">
+				<RadzenDropDown
+					Style="max-width: 160px"
+					@bind-Value=@Modal.Type
+					Data=@ModalTypesOptions
+					Change=@(args => EmitOnShareChange())/>
+			</RadzenFormField>
+		</RadzenColumn>
+		<RadzenColumn Size="12" SizeXS="12" SizeSM="12" SizeMD="6" SizeLG="4" SizeXL="3" SizeXX="4">
+			<RadzenFormField Text="Fluxo">
+				<RadzenDropDown
+					Style="max-width: 160px"
+					@bind-Value=@Modal.FlowType
+					Data=@FlowTypesOptions
+					Change=@(args => EmitOnShareChange())/>
+			</RadzenFormField>
+		</RadzenColumn>
+	</RadzenRow>
+	<RadzenRow JustifyContent="JustifyContent.Stretch" class="mt-2">
+		@* TODO: review responsiveness*@
+		<RadzenColumn Size="12" SizeXS="12" SizeSM="12" SizeMD="4" SizeLG="2" SizeXL="2" SizeXX="2">
+			<RadzenFormField Text="Share(%)">
+				<RadzenNumeric
+					Change=@(v => EmitOnShareChange())
+					ShowUpDown="false"
+					TValue="decimal"
+					Min="Decimal.Zero"
+					Max="100.0m"
+					Format="n2"
+					@bind-Value=@Modal.Share/>
+			</RadzenFormField>
+		</RadzenColumn>
+		<RadzenColumn Size="12" SizeXS="12" SizeSM="12" SizeMD="5" SizeLG="4" SizeXL="3" SizeXX="3">
+			<div style="max-width: 300px">
+				<TremTipoAutocomplete OnValueChange="value => { Modal.TremTipo = value; }" SelectedValue=@Modal.TremTipo/>
+			</div>
+		</RadzenColumn>
+		<RadzenColumn Size="12" SizeXS="12" SizeSM="12" SizeMD="2" SizeLG="2" SizeXL="2" SizeXX="2">
+			<RadzenFormField Text="Dias/mês">
+				<RadzenNumeric
+					Min="Decimal.Zero"
+					@bind-Value=@Modal.DaysByMonth/>
+			</RadzenFormField>
+		</RadzenColumn>
+		<RadzenColumn Size="12" SizeXS="12" SizeSM="12" SizeMD="6" SizeLG="3" SizeXL="2" SizeXX="2">
+			<RadzenFormField Text="Ciclo Operacional">
+				<RadzenTextBox @bind-Value=@Modal.OperationalCycle/>
+			</RadzenFormField>
+		</RadzenColumn>
+	</RadzenRow>
+	<RadzenRow JustifyContent="JustifyContent.Stretch" class="mt-2">
+		<RadzenColumn Visible=@(Modal.FlowType == FlowTypes.EXPEDICAO) Size="12" SizeXS="12" SizeSM="12" SizeMD="4" SizeLG="3" SizeXL="2" SizeXX="2">
+			<RadzenFormField Text="Cap. expedição">
+				<RadzenNumeric
+					TValue="decimal?"
+					Max="100.0m"
+					Min="Decimal.Zero"
+					Format="n2"
+					ShowUpDown="false"
+					@bind-Value=@Modal.ExpedicaoCapacity/>
+			</RadzenFormField>
+		</RadzenColumn>
+	</RadzenRow>
+</RadzenCard>
+<style>
+.modal-card-style{
+background-color: rgba(234,234,234,0.35);
+}	
+.modal-card-style:hover {
+   background: rgba(234,234,234,0.75);
+}
+</style>
+@inject NotificationService NotificationService
+@inject ProductShareService ProductShareService
+@inject ProjectShareService ProjectShareService
+@inject ModalService ModalService
+
+@code {
+
+	private static readonly List<ModalTypes> ModalTypesOptions = Enum.GetValues(typeof(ModalTypes))
+		.ToDynamicList<ModalTypes>().ToList();
+
+	private static readonly List<FlowTypes> FlowTypesOptions = Enum.GetValues(typeof(FlowTypes))
+		.ToDynamicList<FlowTypes>().ToList();
+
+	[Parameter] public Modal Modal { get; set; }
+
+	[Parameter] public Project Project { get; set; }
+
+	[Parameter] public EventCallback<Dictionary<FlowTypes, TotalSharePercentages>> OnShareChange { get; set; }
+
+	[Parameter] public EventCallback OnModalDeletedOrSaved { get; set; }
+
+
+	/**
+	 * Component state
+	 */
+	private string value;
+
+	private bool HasError;
+	private string AlertMessage;
+
+
+	/// On modal share changed, emit event to parent component
+	private async Task EmitOnShareChange()
+	{
+		try
+		{
+			var dictionary = ProjectShareService.CalculateGlobalSharePercentagesByFlowType(Project);
+			SetAlert();
+			await OnShareChange.InvokeAsync(dictionary);
+		}
+		catch (Exception e)
+		{
+			SetAlert(e.Message);
+		}
+	}
+
+	/// Save modal
+	private async void Save()
+	{
+		try
+		{
+			var updated = await (Modal.Id.HasValue
+				? ModalService.Update(Modal)
+				: ModalService.Create(Modal));
+			Modal = updated;
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 4000,
+				Summary = $"modal '{Modal.Type}' {(Modal.Id.HasValue ? "atualizado" : "criado")} com sucesso!",
+				Severity = NotificationSeverity.Success,
+			});
+		}
+		catch (Exception e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 6000,
+				Summary = $"Erro ao {(Modal.Id.HasValue ? "atualizar" : "criar")} modal '{Modal.Type}'",
+				Severity = NotificationSeverity.Error,
+			});
+		}
+	}
+
+	/// Delete modal
+	private async void Delete()
+	{
+		try
+		{
+			if (Modal.Id.HasValue)
+			{
+				await ModalService.Delete(Modal);
+				NotificationService.Notify(new NotificationMessage()
+				{
+					Duration = 4000,
+					Summary = $"modal '{Modal.Type}' Removido com sucesso!",
+					Severity = NotificationSeverity.Success,
+				});
+			}
+
+			OnModalDeletedOrSaved.InvokeAsync();
+		}
+		catch (Exception e)
+		{
+			//TODO: review error message
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 6000,
+				Summary = $"Erro ao deletar modal '{Modal.Type}'",
+				Severity = NotificationSeverity.Error,
+			});
+		}
+	}
+
+	/// Clean form inputs
+	private void CleanFormInputs()
+	{
+		Modal.Type = null;
+		Modal.FlowType = null;
+		Modal.Share = 0.0m;
+		Modal.TremTipo = null;
+		Modal.DaysByMonth = 0;
+		Modal.ExpedicaoCapacity = 0;
+		Modal.OperationalCycle = "";
+		OnShareChange.InvokeAsync();
+	}
+
+	/// Set alert message, show if there is a message
+	private void SetAlert(string message = null)
+	{
+		var HasMessage = !string.IsNullOrEmpty(message);
+		if (HasMessage)
+			AlertMessage = message;
+
+		HasError = HasMessage;
+		StateHasChanged();
+	}
+
+}

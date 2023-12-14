@@ -1,0 +1,178 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+    <PropertyGroup>
+        <NoWarn>CS0168,CS1998,BL9993,CS0649,CS0436,0436</NoWarn>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="BlazorPro.BlazorSize" Version="6.2.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.0-rc.2.23480.2"/>
+        <PackageReference Include="Moq.EntityFrameworkCore" Version="7.0.0.2" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="Radzen.Blazor" Version="*"/>
+        <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.0"/>
+
+        <!-- Tests -->
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.1"/>
+<!--        <PackageReference Include="Moq" Version="4.20.69"/>-->
+        <PackageReference Include="NUnit" Version="3.13.3"/>
+        <PackageReference Include="NUnit3TestAdapter" Version="4.4.2"/>
+        <PackageReference Include="NUnit.Analyzers" Version="3.6.1"/>
+        <PackageReference Include="coverlet.collector" Version="3.2.0"/>
+
+        <PackageReference
+                Include="StyleCop.Analyzers"
+                Version="1.2.0-beta.507"
+                PrivateAssets="all"
+
+                Condition="$(MSBuildProjectExtension) == '.csproj'"
+        />
+
+        <AdditionalFiles Include="Source\Main\Modules\FeatureToggleConfig\Pages\FeatureToggleConfigPage.razor" />
+
+
+        <AdditionalFiles Include="Source\Main\Modules\Modals\Components\ModalCard.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\ProductsConfig\Components\ProductConfigCard.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\ProductsConfig\Pages\ProductConfigCreatePage.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\ProductsConfig\Pages\ProductsConfigPage.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\Products\Components\AppProductModelingButton.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\Products\Components\DialogSideContent.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\Products\Components\ModalOutput.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\Products\Components\ProductCard.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\Products\Components\ProductOutput.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\Products\Components\ProductSummaryCard.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\Products\Components\ProjectModalSharePercentage.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\Products\Pages\ProductsModelingPage.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\Projects\Components\ProjectForm.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\Projects\Pages\ProjectPage.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\Projects\Pages\ProjectsPage.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\Seasonalities\Components\AverageSeasonalityChart.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\Seasonalities\Components\SeasonalityCard.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\Seasonalities\Components\SeazonalityChartCard.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\Shared\Components\Buttons\CommonActionButtonGroup.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\TransporterConfig\Components\TransporterFormCard.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\TransporterConfig\Components\TremTipoFormCard.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\TransporterConfig\Pages\TransporterConfigPage.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\TransporterConfig\Pages\TransportersConfigPage.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\TremTipoConfig\Components\TremTipoFormCard.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\TremTipoConfig\Pages\TremTipoConfigPage.razor" />
+
+        <AdditionalFiles Include="Source\Main\Modules\TremTipoConfig\Pages\TremTiposConfigPage.razor" />
+        <AdditionalFiles Include="stylecop.json" />
+        
+    </ItemGroup>
+    <ItemGroup>
+        <_ContentIncludedByDefault Remove="Tests\bin\Debug\net7.0\Tests.deps.json" />
+        <_ContentIncludedByDefault Remove="Tests\bin\Debug\net7.0\Tests.runtimeconfig.json" />
+        <_ContentIncludedByDefault Remove="Tests\obj\project.assets.json" />
+        <_ContentIncludedByDefault Remove="Tests\obj\Tests.csproj.nuget.dgspec.json" />
+        <_ContentIncludedByDefault Remove="GeniaWebAppTests\bin\Debug\net7.0\GeniaWebAppTests.deps.json" />
+        <_ContentIncludedByDefault Remove="GeniaWebAppTests\bin\Debug\net7.0\GeniaWebAppTests.runtimeconfig.json" />
+        <_ContentIncludedByDefault Remove="GeniaWebAppTests\obj\GeniaWebAppTests.csproj.nuget.dgspec.json" />
+        <_ContentIncludedByDefault Remove="GeniaWebAppTests\obj\project.assets.json" />
+        <_ContentIncludedByDefault Remove="GeniaWebAppTests\obj\project.packagespec.json" />
+        <_ContentIncludedByDefault Remove="Tests\obj\project.packagespec.json" />
+        <_ContentIncludedByDefault Remove="Shared\Components\AppBreadCrumbs.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\Autocomplete\ModalTypeSelector.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\Autocomplete\ProductConfigAutocomplete.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\Autocomplete\ProductConfigImport.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\Autocomplete\ProjectSelector.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\Autocomplete\TremTipoAutocomplete.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\Autocomplete\YearMultiSelector.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\Buttons\AppAddButton.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\Buttons\AppDeleteButton.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\Buttons\AppIconButton.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\Buttons\AppSaveButton.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\Buttons\AppTextButton.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\Buttons\AppVisualizeButton.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\Dialog\ActionConfirmationDialog.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\Dimension\DimensionCard.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\EmptyData.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\Errors\GenericError.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\LangSelector.razor" />
+        <_ContentIncludedByDefault Remove="Shared\Components\Text\AppPageContentTitle.razor" />
+        <_ContentIncludedByDefault Remove="Shared\MainLayout.razor" />
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="Moq">
+            <HintPath>..\..\..\.nuget\packages\moq\4.20.69\lib\net6.0\Moq.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Source\" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Update="Main\Resource\AppLang.en.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>App.en.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Main\Resource\AppLang.pt.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>App.pt.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Main\Resource\AppLang.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>App.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Source\Main\Resource\AppLang.en.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>App.en.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Source\Main\Resource\AppLang.pt.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>App.pt.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Source\Main\Resource\AppLang.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>App.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resource\AppLang.en.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>App.en.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resource\AppLang.pt.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>App.pt.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resource\AppLang.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>App.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="wwwroot\js\FileExport.js" />
+    </ItemGroup>
+    <PropertyGroup>
+        <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+    </PropertyGroup>
+
+</Project>

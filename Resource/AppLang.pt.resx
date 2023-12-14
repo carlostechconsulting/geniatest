@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="JANUARY" xml:space="preserve">
+        <value>Janeiro</value>
+    </data>
+    <data name="changeLangConfirmation" xml:space="preserve">
+        <value>Deseja realmente mudar o idioma?</value>
+    </data>
+    <data name="FEBRUARY" xml:space="preserve">
+        <value>Fevereiro</value>
+    </data>
+    <data name="MARCH" xml:space="preserve">
+        <value>Março</value>
+    </data>
+    <data name="APRIL" xml:space="preserve">
+        <value>Abril</value>
+    </data>
+    <data name="MAY" xml:space="preserve">
+        <value>Maio</value>
+    </data>
+    <data name="JUNE" xml:space="preserve">
+        <value>Junho</value>
+    </data>
+    <data name="JULY" xml:space="preserve">
+        <value>Julho</value>
+    </data>
+    <data name="AUGUST" xml:space="preserve">
+        <value>Agosto</value>
+    </data>
+    <data name="SEPTEMBER" xml:space="preserve">
+        <value>Setembro</value>
+    </data>
+    <data name="OCTOBER" xml:space="preserve">
+        <value>Outubro</value>
+    </data>
+    <data name="NOVEMBER" xml:space="preserve">
+        <value>Novembro</value>
+    </data>
+    <data name="DECEMBER" xml:space="preserve">
+        <value>Dezembro</value>
+    </data>
+    <data name="portuguese" xml:space="preserve">
+        <value>Português</value>
+    </data>
+    <data name="english" xml:space="preserve">
+        <value>Inglês</value>
+    </data>
+    <data name="languageChangeConsequences" xml:space="preserve">
+        <value>Caso confirme a mudança irá perder modificações em andamento.</value>
+    </data>
+    <data name="applyChanges" xml:space="preserve">
+        <value>Aplicar mudanças</value>
+    </data>
+    <data name="cancel" xml:space="preserve">
+        <value>cancelar</value>
+    </data>
+    <data name="projects" xml:space="preserve">
+        <value>Projetos</value>
+    </data>
+    <data name="products" xml:space="preserve">
+        <value>Produtos</value>
+    </data>
+    <data name="settings" xml:space="preserve">
+        <value>Configurações</value>
+    </data>
+    <data name="product_config_unique_name" xml:space="preserve">
+        <value>O nome do produto já existe, deve ser um nome único.</value>
+    </data>
+    <data name="dialogConfirmationTitle" xml:space="preserve">
+        <value>Confirmar ação</value>
+    </data>
+    <data name="SEASONALITY_RECALCULATION_LESS_THAN_TWO_MONTHS" xml:space="preserve">
+        <value>Minimo de 2 mêses editáveis é requerido para o recalculo.</value>
+    </data>
+    <data name="SEASONALITY_RECALCULATION_SUM_GREATER_THAN_100" xml:space="preserve">
+        <value>A soma das porcentagens não pode ser maior que 100%</value>
+    </data>
+    <data name="changeConfirmation" xml:space="preserve">
+        <value>Confirmar</value>
+    </data>
+</root>

@@ -1,0 +1,89 @@
+@using GeniaWebApp.Resource
+<RadzenDropDown @bind-Value=@SelectedLang Data=@LangOptions Change="ShowConfirmationChange" Style="width: 150px">
+	<Template Context="ctx">
+		@Trans[(ctx as LangInfo).Name]
+	</Template>
+</RadzenDropDown>
+
+@inject IStringLocalizer<AppLang> Trans
+@inject NavigationManager NavigationManager;
+@inject DialogService DialogService
+
+@code {
+
+	LangInfo SelectedLang { get; set; }
+
+	List<LangInfo> LangOptions = new()
+	{
+		new LangInfo()
+		{
+			Lang = "pt-BR",
+			Name = "portuguese"
+		},
+		new LangInfo()
+		{
+			Lang = "en-US",
+			Name = "english"
+		}
+	};
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		SelectedLang = LangOptions.FirstOrDefault(x => x.Lang == CultureInfo.DefaultThreadCurrentUICulture.Name);
+	}
+
+
+	void ApplyChanges(DialogService ds)
+	{
+		var culture = CultureInfo.CreateSpecificCulture(SelectedLang.Lang);
+	// CultureInfo.DefaultThreadCurrentCulture = culture;
+		CultureInfo.DefaultThreadCurrentUICulture = culture;
+		NavigationManager.NavigateTo(NavigationManager.Uri, true);
+		ds.Close();
+	}
+
+	protected async Task ShowConfirmationChange()
+	{
+		await DialogService.OpenAsync(Trans["changeLangConfirmation"], ds =>
+			@<div>
+				<RadzenRow JustifyContent="JustifyContent.Stretch">
+					<RadzenColumn Size="12">
+						<p>@Trans["languageChangeConsequences"]</p>
+					</RadzenColumn>
+				</RadzenRow>
+				<RadzenRow JustifyContent="JustifyContent.Center">
+					<RadzenColumn Size="6">
+						<RadzenButton
+							Click=@(v => CloseConfirmationDialog(ds))
+							Size="ButtonSize.Small"
+							Text="@Trans["cancel"]" ButtonStyle="ButtonStyle.Light"/>
+					</RadzenColumn>
+					<RadzenColumn Size="6">
+						<RadzenButton
+							Style="float: right"
+							Size="ButtonSize.Small"
+							Click=@(v => ApplyChanges(ds))
+
+							Text="@Trans["applyChanges"]" ButtonStyle="ButtonStyle.Primary"/>
+					</RadzenColumn>
+				</RadzenRow>
+			</div>, new DialogOptions() { CloseDialogOnOverlayClick = false, CloseDialogOnEsc = false, ShowClose = false });
+	}
+
+	void CloseConfirmationDialog(DialogService ds)
+	{
+		if (SelectedLang.Lang != CultureInfo.DefaultThreadCurrentUICulture.Name)
+		{
+			SelectedLang = LangOptions.FirstOrDefault(x => x.Lang == CultureInfo.DefaultThreadCurrentUICulture.Name);
+		}
+		ds.Close();
+	}
+
+	class LangInfo
+	{
+		public string Lang { get; set; }
+		public string Name { get; set; }
+	}
+
+}

@@ -1,0 +1,13 @@
+{
+  "name": "genia-sandbox",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "sandbox:postgres": "docker-compose stop postgres && docker-compose rm -f postgres && docker-compose up -d --force-recreate postgres",
+    "sandbox:pgadmin": "docker-compose up -d genia-pgadmin",
+    "sandbox:geniawebapp": "docker-compose up geniawebapp",
+    "sandbox": "docker-compose up",
+    "docker:build": "docker build --t genia-app",
+    "tf:local-init": "terraform -chdir=Terraform/Local init" 
+  }
+}

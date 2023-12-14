@@ -1,0 +1,136 @@
+@using GeniaWebApp.Resource
+@using GeniaWebApp.Source.Main.Exceptions
+@using GeniaWebApp.Source.Main.Modules.TremTipoConfig.Services
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Autocomplete
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Buttons
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Alerts
+@using GeniaWebApp.Extentions
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Data.Models.Genia.EnumTypes
+
+<AppFormAlerts AlertMessages="AlertMessages"/>
+
+<RadzenRow JustifyContent="JustifyContent.Stretch" class="mb-3">
+	<RadzenColumn Size="1">
+		<AppSaveButton Click="Save"/>
+	</RadzenColumn>
+</RadzenRow>
+<RadzenRow JustifyContent="JustifyContent.Stretch">
+	<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="4" SizeLG="4" SizeXL="4" SizeXX="4">
+		<RadzenFormField Text="Nome">
+			<RadzenTextBox
+				Change="CleanValidation"
+				@bind-Value=@tremTipo.Name/>
+		</RadzenFormField>
+	</RadzenColumn>
+	<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="4" SizeLG="4" SizeXL="4" SizeXX="4">
+		<RadzenFormField Text="Volume">
+			<RadzenNumeric
+				TValue="decimal?"
+				ShowUpDown="false"
+				Min="Decimal.Zero"
+				Format="n2"
+				Change="CleanValidation"
+				@bind-Value=@tremTipo.Volume/>
+		</RadzenFormField>
+	</RadzenColumn>
+	<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="4" SizeLG="4" SizeXL="4" SizeXX="4">
+		<ModalTypeSelector ModalType="@tremTipo.ApplicableModalType"
+		                   ModalTypeChanged="UpdateModalType"/>
+	</RadzenColumn>
+</RadzenRow>
+
+
+@inject TremTipoService TremTipoService
+@inject NotificationService NotificationService
+@inject IStringLocalizer<AppLang> Trans
+@inject NavigationManager NavigationManager
+
+@code {
+
+	[Parameter]
+	public TremTipo tremTipo { get; set; } = new();
+
+	/*
+	 * Component state
+	 */
+	ICollection<string> AlertMessages = new List<string>();
+
+	private void Save()
+	{
+		if (!AreInputsValid())
+			return;
+		try
+		{
+			string message;
+			if (tremTipo.Id.IsEmpty())
+			{
+				TremTipoService.Create(tremTipo);
+				message = "Criado com sucesso";
+			}
+			else
+			{
+				TremTipoService.Update(tremTipo);
+				message = "Atualizado com sucesso";
+			}
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 4000,
+				Summary = $"Trem Tipo \"{tremTipo.Name}\" {message}",
+				Severity = NotificationSeverity.Success,
+			});
+			NavigationManager.NavigateTo("/trem-tipos-config");
+		}
+		catch (GeniaConstraintException e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 8000,
+				Summary = Trans[e.TransKey],
+				Severity = NotificationSeverity.Error,
+			});
+		}
+		catch (GeniaGenericException e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 8000,
+				Summary = Trans[e.TransKey],
+				Severity = NotificationSeverity.Error,
+			});
+		}
+	}
+
+
+	private bool AreInputsValid()
+	{
+		AlertMessages.Clear();
+		tremTipo.Name.IfHasContentOrElse(
+			(v) => { },
+			() => AlertMessages.Add("<li><b>Nome</b> é obrigatório</li>"));
+		tremTipo.Volume.IfHasValueOrElse(
+			(v) => { },
+			() => AlertMessages.Add("<li><b>Volume</b> é obrigatório</li>"));
+		tremTipo.ApplicableModalType.IfHasValueOrElse(
+			(v) => { },
+			() => AlertMessages.Add("<li><b>Modal aplicável</b> é obrigatório</li>"));
+
+		StateHasChanged();
+		return AlertMessages.Empty();
+	}
+
+
+	private void CleanValidation()
+	{
+		AlertMessages.Clear();
+	}
+
+	
+	private void UpdateModalType(ModalTypes? modalType)
+	{
+		if (modalType.HasValue) tremTipo.ApplicableModalType = modalType;
+
+		CleanValidation();
+	}
+
+}

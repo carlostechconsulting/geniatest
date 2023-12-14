@@ -1,0 +1,36 @@
+<RadzenDropDown @bind-Value=@SelectedYears Data=@YearOptions
+                Multiple=true AllowSelectAll="false"
+                AllowClear=true
+                MaxSelectedLabels="10"
+                Change="@(async (args) => await ValueChanged(args))"
+                SelectedItemsText="Itens selecionados" Chips=true/>
+
+@code {
+	List<int> YearOptions = GetYearOptions(2000);
+
+	[Parameter]
+	public List<int> SelectedYears { get; set; } = new() { DateTime.Now.Year - 1, DateTime.Now.Year - 2, DateTime.Now.Year - 3 };
+
+	[Parameter]
+	public EventCallback<List<int>> OnChange { get; set; }
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+	}
+
+	public async Task ValueChanged(object values)
+	{
+		values ??= new List<int>();
+		SelectedYears = ((IEnumerable<int>)values).ToList();
+		await OnChange.InvokeAsync(SelectedYears);
+	}
+
+	private static List<int> GetYearOptions(int start)
+	{
+		return Enumerable.Range(start, DateTime.Now.Year + 1 - start)
+			.OrderByDescending(i => i).ToList();
+	}
+
+}

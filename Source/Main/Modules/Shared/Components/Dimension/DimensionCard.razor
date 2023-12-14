@@ -1,0 +1,58 @@
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+<RadzenCard class="rz-background-color-primary rz-border-radius-1">
+	<RadzenRow JustifyContent="JustifyContent.Stretch">
+		<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="12" SizeLG="4" SizeXL="4" SizeXX="4">
+			<RadzenText TextStyle="TextStyle.Caption" class="rz-color-on-primary-light">Altura</RadzenText>
+			<br/>
+			<RadzenText TextStyle="TextStyle.Caption" class="rz-color-on-primary-light">
+				<span>@(Dimension?.Height) m</span>
+			</RadzenText>
+		</RadzenColumn>
+		<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="12" SizeLG="4" SizeXL="4" SizeXX="4">
+			<RadzenText TextStyle="TextStyle.Caption" class="rz-color-on-primary-light">Largura</RadzenText>
+			<br/>
+			<RadzenText TextStyle="TextStyle.Caption" class="rz-color-on-primary-light">
+				<span>@(Dimension?.Width) m</span>
+			</RadzenText>
+		</RadzenColumn>
+		<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="12" SizeLG="4" SizeXL="4" SizeXX="4">
+			<RadzenText TextStyle="TextStyle.Caption" class="rz-color-on-primary-light">Comp.</RadzenText>
+			<br/>
+			<RadzenText TextStyle="TextStyle.Caption" class="rz-color-on-primary-light">
+				<span>@(Dimension?.Length) m</span>
+			</RadzenText>
+		</RadzenColumn>
+
+	</RadzenRow>
+</RadzenCard>
+@* <RadzenCard> *@
+@*      *@
+@*     <RadzenRow JustifyContent="JustifyContent.Stretch"> *@
+@*         <RadzenColumn SizeXS="12" SizeSM="12" SizeMD="4" SizeLG="4" SizeXL="4" SizeXX="4"> *@
+@*             <RadzenFormField Text="Altura"> *@
+@*                 <RadzenNumeric class="numeric-input" ShowUpDown="false" Style="max-width: 100%" TValue="decimal?" Format="#.00" *@
+@*                                @bind-Value=@Dimension.Height/> *@
+@*             </RadzenFormField> *@
+@*         </RadzenColumn> *@
+@*         <RadzenColumn SizeXS="12" SizeSM="12" SizeMD="4" SizeLG="4" SizeXL="4" SizeXX="4"> *@
+@*             <RadzenFormField Text="Largura"> *@
+@*                 <RadzenNumeric class="numeric-input" ShowUpDown="false" Style="max-width: 100%" TValue="decimal?" Format="#.00" *@
+@*                                @bind-Value=@Dimension.Width/> *@
+@*             </RadzenFormField> *@
+@*         </RadzenColumn> *@
+@*         <RadzenColumn SizeXS="12" SizeSM="12" SizeMD="4" SizeLG="4" SizeXL="4" SizeXX="4"> *@
+@*             <RadzenFormField Text="Comprimento"> *@
+@*                 <RadzenNumeric class="numeric-input" ShowUpDown="false" Style="max-width: 100%" TValue="decimal?" Format="#.00" *@
+@*                                @bind-Value=@Dimension.Length/> *@
+@*             </RadzenFormField> *@
+@*         </RadzenColumn> *@
+@*     </RadzenRow> *@
+@* </RadzenCard> *@
+
+@code {
+
+	[Parameter]
+	public Dimension Dimension { get; set; }
+
+
+}

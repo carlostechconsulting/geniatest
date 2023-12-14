@@ -1,0 +1,68 @@
+version: '3.2'
+services:
+  
+  #  approvalab-wiremock:
+  #    image: wiremock/wiremock:2.33.2
+  #    container_name: wiremock
+  #    command: "--global-response-templating --verbose"
+  #    ports:
+  #      - '8080:8080'
+  #    volumes:
+  #      - type: bind
+  #        source: ./sandbox/wiremock/mappings
+  #        target: /home/wiremock/mappings
+  #      - type: bind
+  #        source: ./sandbox/wiremock/__files
+  #        target: /home/wiremock/__files
+  #    networks:
+  #      - server-network
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_USER: "genia"
+      POSTGRES_PASSWORD: "genia"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./volumes/postgres:/docker-entrypoint-initdb.d
+      - type: bind
+        source: ./sandbox/postgres/scripts/ddl/ddl.sql
+        target: /docker-entrypoint-initdb.d/ddl.sql
+      - type: bind
+        source: ./sandbox/postgres/scripts/dml/dml.sql
+        target: /docker-entrypoint-initdb.d/dml.sql
+    networks:
+      - server-network
+
+  genia-pgadmin:
+    image: dpage/pgadmin4
+    container_name: genia-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "genia@genia.com"
+      PGADMIN_DEFAULT_PASSWORD: "genia"
+    ports:
+      - "8383:80"
+    depends_on:
+      - postgres
+    networks:
+      - server-network
+
+  geniawebapp:
+    container_name: geniawebapp
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - '3000:80'
+#    volumes:
+#      - ./volumes/geniawebapp/:/
+    depends_on:
+      - postgres
+    networks:
+      - server-network
+
+networks:
+  server-network:
+    driver: bridge

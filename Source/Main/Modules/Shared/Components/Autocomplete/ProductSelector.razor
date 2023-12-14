@@ -1,0 +1,51 @@
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Data.Repository
+
+<RadzenFormField Text="Produto">
+	<RadzenDropDownDataGrid AllowClear="true" @bind-Value=Value AllowVirtualization="true"
+	                        PageSize="5"
+	                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+	                        AllowFiltering="true" Data=@Options TextProperty="Name" Change="OnChange"/>
+</RadzenFormField>
+
+@inject ProductRepo ProductRepo
+@inject NotificationService NotificationService
+
+@code {
+	IQueryable<Product> Options;
+
+	[Parameter] public Product Value { get; set; }
+
+	[Parameter] public EventCallback<Product> OnValueChanged { get; set; }
+
+	[Parameter] public bool SetDefault { get; set; }
+
+	protected override async void OnInitialized()
+	{
+		try
+		{
+			Options = await ProductRepo.GetProducts(new Query() { Expand = "Modals" });
+			if (SetDefault)
+			{
+				Value = Options.FirstOrDefault();
+				OnValueChanged.InvokeAsync(Value);
+			}
+		}
+		catch (Exception e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 8000,
+				Summary = "Erro ao carregar produtos",
+				Severity = NotificationSeverity.Error,
+			});
+		}
+	}
+
+
+	void OnChange()
+	{
+		OnValueChanged.InvokeAsync(Value);
+	}
+
+}

@@ -1,0 +1,44 @@
+@page "/products-config/create"
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Data.Repository
+@using GeniaWebApp.Source.Main.Modules.ProductsConfig.Components
+@using GeniaWebApp.Source.Main.Modules.Seasonalities.Utils
+
+<PageTitle>Novo produto</PageTitle>
+<RadzenBreadCrumb class="mb-4">
+	<RadzenBreadCrumbItem Path="/" Text="Inicio"/>
+	<RadzenBreadCrumbItem Path="/products-config" Text="Configurações de produtos"/>
+	<RadzenBreadCrumbItem Text="@($"Novo Produto")"/>
+</RadzenBreadCrumb>
+
+<RadzenCard>
+	<RadzenRow JustifyContent="JustifyContent.Stretch">
+		<RadzenText TextStyle="TextStyle.H6" Text="Novo Produto"/>
+	</RadzenRow>
+	<RadzenRow Style="margin-top: 20px" JustifyContent="JustifyContent.Stretch">
+		<ProductConfigCard IsNew="true" ProductConfig="ProductConfig" OnChanged="ProductSaved"/>
+	</RadzenRow>
+</RadzenCard>
+
+
+@inject NavigationManager NavigationManager
+
+@code {
+
+
+	bool allowVirtualization;
+	public ProductConfig ProductConfig { get; set; } = new();
+
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		ProductConfig.Seasonality = SeasonalityMonthDataUtils.GetDefaultSeasonality();
+	}
+
+	public async Task ProductSaved(ProductConfig productConfig)
+	{
+		NavigationManager.NavigateTo("/products-config");
+	}
+
+}

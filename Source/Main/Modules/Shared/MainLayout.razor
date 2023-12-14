@@ -1,0 +1,101 @@
+@using GeniaWebApp.Resource
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Errors
+@inherits LayoutComponentBase
+<RadzenDialog/>
+<RadzenNotification/>
+<RadzenTooltip/>
+<RadzenContextMenu/>
+
+<RadzenLayout style="grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body';">
+	<RadzenHeader>
+		<RadzenRow JustifyContent="JustifyContent.Start" AlignItems="AlignItems.Center" Gap="0">
+			<RadzenColumn Size="5">
+				<RadzenSidebarToggle Click="@SidebarToggleClick"></RadzenSidebarToggle>
+			</RadzenColumn>
+			<RadzenColumn Size="7">
+				@* <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End"> *@
+				@*     <LangSelector/> *@
+				@* </RadzenStack> *@
+			</RadzenColumn>
+		</RadzenRow>
+	</RadzenHeader>
+	<RadzenBody @bind-Expanded="@sidebarExpanded">
+		<RadzenRow JustifyContent="JustifyContent.Center" Style="margin-top: 20px">
+			<RadzenColumn Size="11">
+				<ErrorBoundary Context="exception" @ref="ErrorBoundary">
+					<ChildContent>
+						<RadzenColumn Size="12">
+							@Body
+						</RadzenColumn>
+					</ChildContent>
+					<ErrorContent>
+						<GenericError Exception="exception"/>
+					</ErrorContent>
+				</ErrorBoundary>
+			</RadzenColumn>
+		</RadzenRow>
+	</RadzenBody>
+	@* TODO: 770px width is trigger to responsive - make the menu hiden when < 770px *@
+	<RadzenSidebar Expanded="true" Responsive="false" style="@(sidebarExpanded ? "z-index: 2; width: 300px" : "z-index: 2; width: 60px")">
+		<RadzenStack Visible="sidebarExpanded" AlignItems="AlignItems.Center">
+			<RadzenImage Path="images/genia-logo3.png" Style="max-width: 150px"></RadzenImage>
+		</RadzenStack>
+		<RadzenStack Visible="!sidebarExpanded" AlignItems="AlignItems.Center">
+			<RadzenImage Path="images/genia-logo3-minimal.png" Style="max-width: 30px"></RadzenImage>
+		</RadzenStack>
+		<RadzenPanelMenu ShowArrow="@sidebarExpanded"
+		                 DisplayStyle="@(sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)">
+			@* <RadzenPanelMenu > *@
+			<RadzenPanelMenuItem Text="Dashboard" Path="" Icon="dashboard"
+			                     MouseEnter="@(args => { if (!sidebarExpanded) ShowTooltip(args, "Dashboard"); })"/>
+			<RadzenPanelMenuItem Text="@Trans["projects"]" Path="projects" Icon="task"
+			                     MouseEnter="@(args => { if (!sidebarExpanded) ShowTooltip(args, Trans["products"]); })"/>
+			@* <RadzenPanelMenuItem Text="@Trans["products"]" Path="products" Icon="workspaces_filled"/> *@
+
+			<RadzenPanelMenuItem Text="@Trans["settings"]" Icon="settings_suggest"
+			                     MouseEnter="@(args => { if (!sidebarExpanded) ShowTooltip(args, Trans["settings"]); })">
+				<RadzenPanelMenuItem Text="@Trans["products"]"
+				                     Path="products-config"
+				                     MouseEnter="@(args => { if (!sidebarExpanded) ShowTooltip(args, "Configuração de produtos"); })"
+				                     Icon="source">
+				</RadzenPanelMenuItem>
+				<RadzenPanelMenuItem Text="Trem Tipos" Path="trem-tipos-config" Icon="fire_truck"
+				                     MouseEnter="@(args => { if (!sidebarExpanded) ShowTooltip(args, "Trem tipo"); })">
+				</RadzenPanelMenuItem>
+				<RadzenPanelMenuItem Text="Transportadores" Path="transporters-config" Icon="agriculture"
+				                     MouseEnter="@(args => { if (!sidebarExpanded) ShowTooltip(args, "Transportadores"); })">
+				</RadzenPanelMenuItem>
+			</RadzenPanelMenuItem>
+		</RadzenPanelMenu>
+	</RadzenSidebar>
+</RadzenLayout>
+
+@inject IStringLocalizer<AppLang> Trans
+@inject TooltipService TooltipService
+
+@code {
+	private bool HasError { get; set; } = false;
+	private ErrorBoundary? ErrorBoundary;
+
+	private bool sidebarExpanded;
+
+
+	private void SidebarToggleClick()
+	{
+		sidebarExpanded = !sidebarExpanded;
+	}
+
+
+	void ShowTooltip(ElementReference elementReference, string text) => TooltipService
+		.Open(
+			elementReference,
+			text,
+			new()
+			{
+				Delay = 0,
+				Position = TooltipPosition.Right,
+				Duration = 1000,
+				Style = "background-color: gray",
+			});
+
+}

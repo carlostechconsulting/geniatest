@@ -1,0 +1,211 @@
+@using GeniaWebApp.Extentions
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Data.Models.Genia.EnumTypes
+@using GeniaWebApp.Source.Main.Data.Repository
+@using GeniaWebApp.Source.Main.Modules.Products.Components
+@using GeniaWebApp.Source.Main.Modules.Projects.Services
+@using GeniaWebApp.Source.Main.Modules.Shared.Components
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Alerts
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Buttons
+@using GeniaWebApp.Source.Main.Modules.Dashboard.Components
+@using GeniaWebApp.Source.Main.Modules.Products.models
+
+<AppFormAlerts AlertMessages="AlertMessages"/>
+@* Form buttons *@
+<RadzenRow JustifyContent="JustifyContent.Stretch" class="mb-3">
+	<CommonActionButtonGroup
+		ShowSaveButton
+		OnSave="Save"
+		ShowProjectModelingButton
+		OnProjectModeling="@(() => NavigationManager.NavigateTo($"/products-modeling/{Project.Id}"))"
+		IsProjectModelingDisabled="!Project.Id.HasValue"
+		/>
+		
+</RadzenRow>
+@* Project info inputs *@
+<RadzenRow JustifyContent="JustifyContent.Stretch" class="mb-3">
+	<RadzenColumn Size="12" SizeXS="12" SizeSM="12" SizeMD="12" SizeLG="12" SizeXL="8" SizeXX="8">
+		<RadzenFieldset Text="Informações do projeto">
+			<RadzenRow JustifyContent="JustifyContent.Center">
+				<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="12" SizeLG="4" SizeXL="4" SizeXX="4">
+					<RadzenFormField Text="Nome">
+						<RadzenTextBox Change="CleanValidation" @bind-Value=@Project.Name/>
+					</RadzenFormField>
+				</RadzenColumn>
+				<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="12" SizeLG="6" SizeXL="6" SizeXX="6">
+					<RadzenFormField Text="Description">
+						<RadzenTextArea Cols="30" Rows="3" @bind-Value=@Project.Description/>
+					</RadzenFormField>
+				</RadzenColumn>
+			</RadzenRow>
+		</RadzenFieldset>
+	</RadzenColumn>
+	<RadzenColumn Size="12" SizeXS="12" SizeSM="12" SizeMD="12" SizeLG="12" SizeXL="4" SizeXX="4">
+		<RadzenRow JustifyContent="JustifyContent.Stretch">
+			@foreach (var entry in TotalSharePercentages)
+			{
+				<RadzenColumn Size="6">
+					<ProjectModalSharePercentage ProgressBarStyle="@(entry.Key == FlowTypes.RECEPCAO ? ProgressBarStyle.Warning : ProgressBarStyle.Success)"
+					                             FlowTypes="entry.Key"
+					                             TotalSharePercentages="entry.Value"/>
+				</RadzenColumn>
+			}
+		</RadzenRow>
+	</RadzenColumn>
+</RadzenRow>
+
+
+@* Products cards *@
+<RadzenFieldset Text="Produtos" class="share-container">
+	@if (Project.Products.HasAny())
+	{
+		<RadzenRow JustifyContent="JustifyContent.Stretch">
+			@foreach (var product in Project.Products)
+			{
+				<RadzenColumn Size="12" SizeXS="12" SizeSM="12" SizeMD="12" SizeLG="12" SizeXL="6" SizeXX="6">
+					<ProductSummaryCard Product="product" IsReadyOnly="true"/>
+				</RadzenColumn>
+			}
+		</RadzenRow>
+	}
+	else
+	{
+		<RadzenRow JustifyContent="JustifyContent.Center">
+			<RadzenColumn Size="1">
+				<EmptyData/>
+			</RadzenColumn>
+		</RadzenRow>
+	}
+
+
+</RadzenFieldset>
+
+@inject NotificationService NotificationService
+@inject ProjectRepo ProjectRepo
+@inject ProjectService ProjectService
+@inject NavigationManager NavigationManager
+@inject ILogger<ProjectForm> Logger
+@inject ProjectShareService ProjectShareService
+
+@code {
+
+	/*
+	 * Component parameters
+	 */
+
+	[Parameter] public EventCallback OnSave { get; set; }
+
+	[Parameter] public Project Project { get; set; } = new();
+
+	[Parameter] public bool IsNew { get; set; }
+
+	/*
+	 * Component state
+	 */
+	public bool Created { get; set; }
+	ICollection<string> AlertMessages = new List<string>();
+	private Dictionary<FlowTypes, TotalSharePercentages> TotalSharePercentages = new();
+
+
+	protected override void OnInitialized()
+	{
+		TotalSharePercentages = ProjectShareService.CalculateGlobalSharePercentagesByFlowType(Project);
+	}
+
+	/**
+     * Event Handler
+     * Create or Update project
+     */
+	public Task Save()
+	{
+		if (!AreInputsValid())
+			return Task.CompletedTask;
+		return (IsNew ? Create() : Update())
+			.ContinueWith(task => NavigationManager.NavigateTo("/projects"));
+	}
+
+	/**
+     * Update project
+     */
+	private Task Update()
+	{
+		return ProjectRepo.UpdateProject(Project.Id, Project)
+			.ContinueWith(result =>
+			{
+				if (result.Exception is not null)
+				{
+					Logger.Log(LogLevel.Information,
+						$"[GENIA] ERROR WHEN TRYING TO SAVE PROJECT ID: {Project.Id}. {result.Exception.Message}",
+						result.Exception);
+					NotificationService.Notify(new NotificationMessage()
+					{
+						Duration = 3000,
+						Detail = "Por favor, tente novamente mais tarde ou entre em contato com o suporte.",
+						Summary = $"Erro ao tentar salvar projeto {Project.Name}!",
+						Severity = NotificationSeverity.Error
+					});
+				}
+				else
+				{
+					NotificationService.Notify(new NotificationMessage()
+					{
+						Duration = 8000,
+						Summary = $"Projeto \"{Project.Name}\" atualizado com sucesso!",
+						Severity = NotificationSeverity.Success
+					});
+					Logger.Log(LogLevel.Information, $"[GENIA] PROJECT ID: {Project.Id} UPDATED.");
+				}
+			});
+	}
+
+	/**
+     * Create project
+     */
+	private Task Create()
+	{
+		return ProjectService.Create(Project).ContinueWith(result =>
+		{
+			if (result.Exception is not null)
+			{
+				Logger.Log(LogLevel.Information,
+					$"[GENIA] ERROR WHEN TRYING TO SAVE PROJECT ID: {Project.Id}. {result.Exception.Message}",
+					result.Exception);
+				NotificationService.Notify(new NotificationMessage()
+				{
+					Duration = 3000,
+					Detail = "Por favor, tente novamente mais tarde ou entre em contato com o suporte.",
+					Summary = $"Erro ao tentar salvar projeto {Project.Name}!",
+					Severity = NotificationSeverity.Error
+				});
+			}
+			else
+			{
+				NotificationService.Notify(new NotificationMessage()
+				{
+					Duration = 3000,
+					Summary = $"Projeto \"{Project.Name}\" criado com sucesso!",
+					Severity = NotificationSeverity.Success
+				});
+				Created = true;
+				Logger.Log(LogLevel.Information, $"[GENIA] PROJECT ID: {Project.Id}  CREATED.");
+			}
+		});
+	}
+
+	private bool AreInputsValid()
+	{
+		AlertMessages.Clear();
+		Project.Name.IfHasContentOrElse(
+			(v) => { },
+			() => AlertMessages.Add("<li><b>Nome</b> é obrigatório</li>"));
+
+		StateHasChanged();
+		return AlertMessages.Empty();
+	}
+
+	private void CleanValidation()
+	{
+		AlertMessages.Clear();
+	}
+
+}

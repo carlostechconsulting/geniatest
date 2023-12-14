@@ -1,0 +1,171 @@
+@page "/trem-tipos-config"
+@using GeniaWebApp.Resource
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Data.Repository
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Buttons
+@using Microsoft.EntityFrameworkCore
+
+<PageTitle>Configuração de Trem tipo</PageTitle>
+
+<RadzenRow JustifyContent="JustifyContent.Stretch" class="mb-4">
+	<RadzenBreadCrumb>
+		<RadzenBreadCrumbItem Path="/" Text="Inicio"/>
+		<RadzenBreadCrumbItem Text="Configurações de Transporter"/>
+	</RadzenBreadCrumb>
+</RadzenRow>
+<RadzenCard>
+	<RadzenRow JustifyContent="JustifyContent.Start">
+		<RadzenColumn Size="12">
+			<RadzenText TextStyle="TextStyle.DisplayH5" Text="Trem Tipos"></RadzenText>
+		</RadzenColumn>
+	</RadzenRow>
+	<RadzenRow JustifyContent="JustifyContent.Stretch">
+		<RadzenColumn Size="12">
+			<RadzenDataGrid 
+				@ref="RadzenDataGridRef"
+				AllowFiltering="true"
+			                AllowColumnResize="true"
+			                AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+			                AllowSorting="true" PageSize="10"
+			                AllowPaging="true"
+			                PagerHorizontalAlign="HorizontalAlign.Right"
+			                SelectionMode="DataGridSelectionMode.Single"
+			                @bind-Value=@SelectedTremTipos
+			                ShowPagingSummary="false"
+			                ShowEmptyMessage="true"
+			                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+			                Density="Density.Compact"
+                            PagerPosition="PagerPosition.TopAndBottom"
+			                EmptyText="Nenhum trem tipo encontrado."
+			                Data="@TremTipoQueryable" TItem="TremTipo" ColumnWidth="300px">
+				<Columns>
+					<RadzenDataGridColumn TItem="TremTipo" Title="Ações" Sortable="false" Frozen="true" TextAlign="TextAlign.Justify">
+						<FilterTemplate Context="data">
+							<AppAddButton Click="@(() => NavigationManager.NavigateTo("/trem-tipo-config"))"/>
+						</FilterTemplate>
+						<Template Context="data">
+							<RadzenRow JustifyContent="JustifyContent.Stretch">
+								<AppVisualizeButton Click="@(() => NavigationManager.NavigateTo($"/trem-tipo-config/{data.Id}"))"/>
+								<AppDeleteButton Click="() => ShowDeleteConfirmation(data)"/>
+							</RadzenRow>
+						</Template>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="TremTipo" Property="Name" Title="Nome" MinWidth="160px" TextAlign="TextAlign.Justify"/>
+					<RadzenDataGridColumn TItem="TremTipo" Property="Volume" Filterable="false" Title="Volume (t)" Width="100px" TextAlign="TextAlign.Justify"/>
+					<RadzenDataGridColumn TItem="TremTipo" Property="ApplicableModalType" Title="Modal Aplicável" MinWidth="100px" TextAlign="TextAlign.Justify">
+						<Template Context="data">
+							<RadzenBadge BadgeStyle="BadgeStyle.Light" Text="@data.ApplicableModalType.ToString()"/>
+						</Template>
+
+					</RadzenDataGridColumn>
+					@* <RadzenDataGridColumn TItem="Transporter" Title="Dimensões" Sortable="false" Filterable="false"  Width="200px" TextAlign="TextAlign.Center"> *@
+					@*     <Template Context="data"> *@
+					@*         <DimensionCard Dimension="data.Dimension"/> *@
+					@*     </Template> *@
+					@* </RadzenDataGridColumn> *@
+
+				</Columns>
+			</RadzenDataGrid>
+		</RadzenColumn>
+	</RadzenRow>
+</RadzenCard>
+
+
+@inject TremTipoRepo TremTipoRepo
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+@inject IStringLocalizer<AppLang> Trans
+@inject DialogService DialogService
+
+@code {
+	private IQueryable<TremTipo> TremTipoQueryable;
+	private readonly Query QueryDefault = new() { OrderBy = "UpdatedAt desc" };
+
+	private IList<TremTipo> SelectedTremTipos;
+	private RadzenDataGrid<TremTipo> RadzenDataGridRef;
+	[Parameter]
+	public bool IsNew { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		await FetchData();
+	}
+
+	/**
+     * Fetches data for data grid
+     */
+	private async Task FetchData()
+	{
+		try
+		{
+			TremTipoQueryable = await TremTipoRepo.GetTremTipos(QueryDefault);
+		}
+		catch (Exception e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 3000,
+				Summary = "Erro ao carregar projetos!" + e.Message,
+				Severity = NotificationSeverity.Error
+			});
+		}
+	}
+
+	private async Task Delete(long? id, DialogService ds)
+	{
+		try
+		{
+			TremTipoRepo.DeleteTremTipo(id);
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 3000,
+				Summary = "Projeto deletado com sucesso!",
+				Severity = NotificationSeverity.Success
+			});
+			ds.Close();
+			await FetchData();
+			RadzenDataGridRef.GoToPage(0);
+		}
+		//TODO: create business exception
+		catch (DbUpdateException e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 3000,
+				Summary = "Erro ao deletar projeto!",
+				Severity = NotificationSeverity.Error
+			});
+		}
+	}
+
+	protected async Task ShowDeleteConfirmation(TremTipo TremTipo)
+	{
+		await DialogService.OpenAsync("Confirmar", ds =>
+			@<div>
+				<RadzenRow JustifyContent="JustifyContent.Stretch">
+					<RadzenColumn Size="12">
+						<p>Deseja realmente remover o Trem tipo <strong>@TremTipo.Name</strong>?</p>
+					</RadzenColumn>
+				</RadzenRow>
+				<RadzenRow JustifyContent="JustifyContent.Center">
+					<RadzenColumn Size="6">
+						<RadzenButton
+							Click=@(v => ds.Close())
+							Size="ButtonSize.Small"
+							Text="@Trans["cancel"]" ButtonStyle="ButtonStyle.Light"/>
+					</RadzenColumn>
+					<RadzenColumn Size="6">
+						<RadzenButton
+							Style="float: right"
+							Size="ButtonSize.Small"
+							Click=@(v => Delete(TremTipo.Id, ds))
+
+							Text="@Trans["applyChanges"]" ButtonStyle="ButtonStyle.Danger"/>
+					</RadzenColumn>
+				</RadzenRow>
+			</div>, new DialogOptions() { CloseDialogOnOverlayClick = false, CloseDialogOnEsc = false, ShowClose = false });
+	}
+
+}

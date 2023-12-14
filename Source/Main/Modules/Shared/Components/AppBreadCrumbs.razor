@@ -1,0 +1,13 @@
+<RadzenBreadCrumb class="mb-4">
+	@foreach (var item in BreadCrumbs)
+	{
+		<RadzenBreadCrumbItem Path="@item.Key" Text="@item.Value"/>
+	}
+</RadzenBreadCrumb>
+
+@code {
+
+	[Parameter]
+	public Dictionary<string, string> BreadCrumbs { get; set; } = new();
+
+}

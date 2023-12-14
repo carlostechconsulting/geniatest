@@ -1,0 +1,300 @@
+﻿@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Exceptions.SeasonalityCalculation
+@using GeniaWebApp.Source.Main.Modules.Products.Services
+@using GeniaWebApp.Source.Main.Modules.Seasonalities.Components
+@using GeniaWebApp.Source.Main.Modules.Seasonalities.Services
+@using GeniaWebApp.Source.Main.Modules.Seasonalities.Utils
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Autocomplete
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Buttons
+@using GeniaWebApp.Source.Main.Modules.Shared.Utils
+@using BlazorPro.BlazorSize
+@using GeniaWebApp.Resource
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Loading
+@using GeniaWebApp.Source.Main.Modules.Shared.Services
+@using GeniaWebApp.Source.Main.Modules.Shared.Utils.Dialogs
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Dialog
+
+<RadzenCard class="modal-card-style" Style="@(Product.Id == null ? "border: 3px dotted #41729F" : "border: 1px dotted grey")">
+	<RadzenRow JustifyContent="JustifyContent.End">
+		<CommonActionButtonGroup
+			ShowSaveButton
+			OnSave="Save"
+			ShowResetSeasonalityButton
+			OnResetSeasonality="ShowResetSeasonalityConfirmation"
+			ShowCleanButton="false"
+			OnClean="CleanFormInputs"
+			ShowDeleteButton
+			OnDelete="Delete"
+			ShowUndoButton
+			OnUndo="() => { }"
+			/>
+	</RadzenRow>
+
+	<RadzenRow JustifyContent="JustifyContent.Stretch">
+		<RadzenColumn Size="12" SizeXS="12" SizeSM="4" SizeMD="4" SizeLG="4" SizeXL="3" SizeXX="2">
+			<RadzenFormField Text="Produto">
+				<RadzenTextBox Name="InputName" Disabled="IsReadyOnly" @bind-Value=@Product.Name Style="min-width: 100px"/>
+			</RadzenFormField>
+		</RadzenColumn>
+		<RadzenColumn Size="12" SizeXS="12" SizeSM="3" SizeMD="4" SizeLG="4" SizeXL="3" SizeXX="2">
+			<RadzenFormField Text="Volume">
+				<RadzenNumeric ShowUpDown="false" Style="max-width: 100%"
+				               Min="Decimal.Zero"
+				               Format="n2"
+				               TValue="decimal?"
+				               @bind-Value=@Product.Volume Change="@(args => SeasonalityCardRef.OnVolumeChange(Product.Volume))"/>
+			</RadzenFormField>
+		</RadzenColumn>
+		@if (Product.Id == null)
+		{
+			<RadzenColumn Size="12" SizeXS="12" SizeSM="4" SizeMD="4" SizeLG="4" SizeXL="3" SizeXX="2">
+				<ProductConfigImport OnValueChanged="ImportFromProductConfig"/>
+			</RadzenColumn>
+		}
+	</RadzenRow>
+	<RadzenRow JustifyContent="JustifyContent.Stretch" class="row-container">
+		<RadzenColumn Size="12">
+			<RadzenFieldset Text="Sazonalidade" class="share-container">
+				<SeasonalityCard
+					@ref="SeasonalityCardRef"
+					OnPercentageChanged="OnSeasonalityChanged"
+					Seasonality="Product.Seasonality" ShowValues="true"/>
+			</RadzenFieldset>
+		</RadzenColumn>
+	</RadzenRow>
+	<RadzenRow JustifyContent="JustifyContent.Stretch" class="row-container">
+		<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="4" SizeLG="4" SizeXL="2" SizeXX="2">
+			<RadzenFieldset IconColor="darkgreen" Icon="keyboard_double_arrow_down" Text="Share Recepção" class="share-container">
+				@(Product.ReceptionShare)%
+			</RadzenFieldset>
+		</RadzenColumn>
+
+		<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="4" SizeLG="4" SizeXL="2" SizeXX="2">
+			<RadzenFieldset IconColor="#afaf05" Icon="keyboard_double_arrow_up" Text="Share Expedição" class="share-container">
+				@(Product.ExpeditionShare)%
+			</RadzenFieldset>
+		</RadzenColumn>
+	</RadzenRow>
+</RadzenCard>
+<AppLoadingDialog @ref="AppLoadingDialogRef"/>
+
+<style>
+.modal-card-style{
+background-color: rgba(234,234,234,0.35);
+}	
+ .share-container{
+ text-align: center;
+ }
+ .row-container{
+    margin-top: 20px;
+ }
+</style>
+@inject IStringLocalizer<AppLang> Trans
+@inject TooltipService TooltipService
+@inject ILogger<ProductCard> Logger
+@inject ProductShareService ProductShareService
+@inject SeasonalityMonthDataService SeasonalityMonthDataService
+@inject IResizeListener ResizeListener
+@inject ProductService ProductService
+@inject NotificationService NotificationService
+@inject DialogService DialogService
+
+@code {
+
+	[Parameter] public Product Product { get; set; }
+
+	[Parameter] public bool IsSideDialogOpen { get; set; }
+
+	[Parameter] public EventCallback<Product> OnVolumeChange { get; set; }
+
+	[Parameter] public EventCallback<Product> OnDeleted { get; set; }
+
+	/*
+	 * Component state
+	 */
+	string value;
+	private string CardStyle { get; set; }
+	private SeasonalityCard SeasonalityCardRef { get; set; }
+	private AppLoadingDialog AppLoadingDialogRef { get; set; }
+
+	[Parameter] public bool IsReadyOnly { get; set; }
+
+
+	// life cycle
+	protected override Task OnInitializedAsync()
+	{
+		try
+		{
+			Product = ProductShareService.CalculateSharesByProduct(Product);
+		}
+		catch (Exception e)
+		{
+			//TODO: deal with incinsistence properly
+			Console.WriteLine(e);
+		}
+
+		return Task.CompletedTask;
+	}
+
+	private void OnScreenResized(bool IsSideDialogOpen)
+	{
+		// 	if (data.Width < 1500)
+		// 	{
+		// // Side Dialog is NOT Open
+		// 		CardStyle = Product.Id == null ? "border: 3px dotted #41729F;" : "border: 1px dotted grey;";
+		// 	}
+		// 	else
+		// 	{
+		// 		CardStyle = Product.Id == null ? "border: 3px dotted #41729F;max-width: 800px" : "border: 1px dotted grey;max-width: 800px";
+		// 	}
+	}
+
+	// others
+
+	void OnChange(string value, string name)
+	{
+	}
+
+	void OnClick(string value)
+	{
+		NotificationService.Notify(new NotificationMessage()
+		{
+			Duration = 3000,
+			Payload = { },
+			Severity = NotificationSeverity.Success
+		});
+	}
+
+	void ShowTooltip(ElementReference elementReference, string text) => TooltipService
+		.Open(
+			elementReference,
+			text,
+			ToolTipDefaultConfig.GetTooltipOptions());
+
+
+	void ImportFromProductConfig(ProductConfig config)
+	{
+		if (config == null)
+		{
+			Product = new Product()
+			{
+				Seasonality = SeasonalityMonthDataUtils.GetDefaultSeasonality()
+			};
+			return;
+		}
+
+		Product.Name = config.Name;
+		Product.Seasonality = config.Seasonality.CloneNew();
+		Logger.Log(LogLevel.Debug, config.Name);
+	}
+
+	async Task OnSeasonalityChanged(SeasonalityMonthData changedMonth)
+	{
+		try
+		{
+			Product.Seasonality.SeasonalitiesMonthData = SeasonalityMonthDataService.Recalculate(
+				Product.Seasonality.SeasonalitiesMonthData.ToList(),
+				changedMonth,
+				Product.Volume ?? 0
+			);
+		}
+		catch (SeasonalityRecalculationException e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 8000,
+				Summary = "Validação",
+				Detail = "",
+				Severity = NotificationSeverity.Error,
+			});
+		}
+	}
+
+	private void Save()
+	{
+		AppLoadingDialogRef.Start();
+		var task = Product.Id.HasValue ? ProductService.Update(Product) : ProductService.Create(Product);
+		task.ContinueWith(task =>
+		{
+			if (task.Exception is not null)
+			{
+				NotificationService.Notify(new NotificationMessage()
+				{
+					Duration = 6000,
+					Summary = $"Algo errado ao salvar o produto \"{Product.Name}\"",
+					Severity = NotificationSeverity.Error,
+				});
+			}
+			else
+			{
+				NotificationService.Notify(new NotificationMessage()
+				{
+					Duration = 4000,
+					Summary = $"Produto \"{Product.Name}\" criado com sucesso!",
+					Severity = NotificationSeverity.Success,
+				});
+			}
+
+			AppLoadingDialogRef.Stop();
+		});
+	}
+
+	private async void Delete()
+	{
+		try
+		{
+			AppLoadingDialogRef.Start();
+			await ProductService.Delete(Product);
+			OnDeleted.InvokeAsync();
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 4000,
+				Summary = $"Produto \"{Product.Name}\" removido com sucesso!",
+				Severity = NotificationSeverity.Success,
+			});
+		}
+		catch (Exception e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 6000,
+				Summary = $"Algo errado ao remover o produto \"{Product.Name}\"",
+				Severity = NotificationSeverity.Error,
+			});
+		}
+		finally
+		{
+			AppLoadingDialogRef.Stop();
+		}
+	}
+
+	private void CleanFormInputs()
+	{
+		throw new NotImplementedException();
+	}
+
+
+	protected async Task ShowResetSeasonalityConfirmation()
+	{
+		await DialogService.OpenAsync(Trans[ActionDialogsUtils.CONFIRMATION_DIALOG_TITLE_TRANS_KEY], ds =>
+				@<ActionConfirmationDialog
+					 Text=@($"<p>Deseja realmente reconfigurar os TODOS os valores de sazoanlidade do produto <strong>{Product.Name}</strong> para o valor padrão?</p>")
+					 Canceled="@(v => ds.Close())"
+					 Confirmed="@(v => ResetSeasonality(ds))"/>,
+			ActionDialogsUtils.DIALOG_OPTIONS);
+	}
+
+	private void ResetSeasonality(DialogService ds)
+	{
+		Product.Seasonality.SeasonalitiesMonthData = SeasonalityMonthDataService
+			.ResetPercentagesToDefault(Product.Seasonality.SeasonalitiesMonthData?.ToList());
+		ds.Close();
+		NotificationService.Notify(new NotificationMessage()
+		{
+			Duration = 6000,
+			Summary = $"Sazonalidade resetada para o produto \"{Product.Name}\"",
+			Severity = NotificationSeverity.Error,
+		});
+	}
+
+}

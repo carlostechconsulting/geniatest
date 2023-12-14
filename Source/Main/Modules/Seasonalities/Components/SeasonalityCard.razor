@@ -1,0 +1,112 @@
+@using GeniaWebApp.Resource
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Modules.Seasonalities.Services
+@using GeniaWebApp.Source.Main.Modules.Shared.Utils
+@inject IStringLocalizer<AppLang> Trans
+
+
+@if (Seasonality.SeasonalitiesMonthData != null)
+{
+	<RadzenRow JustifyContent="JustifyContent.Stretch">
+		@foreach (var month in Seasonality.SeasonalitiesMonthData)
+		{
+			<RadzenColumn Size="6" SizeXS="4" SizeSM="4" SizeMD="3" SizeLG="2" SizeXL="1" SizeXX="1">
+				<RadzenText Text=@(Trans[month.MonthName.ToString()]) TextStyle="TextStyle.Subtitle2"/>
+				@* <RadzenSwitch @bind-Value=@(month.Changeable) Disabled="IsReadyOnly"/> *@
+				<br/>
+				<RadzenNumeric class="numeric-input" Disabled="@(!month.Changeable || IsReadyOnly)" ShowUpDown="false" 
+				               Style="max-width: 100%" TValue="decimal?" Format="#.00"
+				               @bind-Value=@month.Percentage Change="@(args => { OnPercentageChange(month); })"
+				               MouseEnter="@(args => { ShowTooltip(args, $"Valor: {month.Percentage}"); })"/>
+				@if (ShowValues && month.Value != null)
+				{
+					<br/>
+					<RadzenText Text="@(month.Value.ToString())" TextStyle="TextStyle.Caption"/>
+				}
+			</RadzenColumn>
+		}
+		<RadzenColumn Size="12">
+			<RadzenProgressBar ProgressBarStyle="ProgressBarStyle.Success"
+			                   Style="color: black; font-weight: bold"
+			                   Value="45" Unit="@($"% Usado de 100% disponível")"/>
+		</RadzenColumn>
+
+	</RadzenRow>
+}
+
+
+<style>
+ .numeric-input {
+     width: 100px;
+ }
+ .table-cell{
+    text-align: center;
+ }
+</style>
+@inject TooltipService tooltipService
+@inject SeasonalityMonthDataService SeasonalityMonthDataService
+@inject NotificationService NotificationService
+
+@code {
+
+	// SeasonalityMonthDataUtils.
+	[Parameter] public Seasonality Seasonality { get; set; } = new();
+	[Parameter] public decimal? ProductVolume { get; set; }
+
+	[Parameter] public EventCallback<SeasonalityMonthData> OnPercentageChanged { get; set; }
+
+	// {
+	//     SeasonalitiesMonthData = SeasonalityMonthDataUtils.GetDefaultList()
+	// };
+	[Parameter] public bool IsReadyOnly { get; set; }
+
+	[Parameter] public bool ShowValues { get; set; }
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		Seasonality.SeasonalitiesMonthData = Seasonality.SeasonalitiesMonthData.OrderBy(s => s.MonthName).ToList();
+	}
+
+	void ShowTooltip(ElementReference elementReference, string text) => tooltipService
+		.Open(
+			elementReference,
+			text,
+			ToolTipDefaultConfig.GetTooltipOptions());
+
+	async Task OnPercentageChange(SeasonalityMonthData changedMonth)
+	{
+		OnPercentageChanged.InvokeAsync(changedMonth);
+	}
+
+	public void OnVolumeChange(decimal? productVolume)
+	{
+		if (!ShowValues)
+			return;
+		try
+		{
+			Seasonality.SeasonalitiesMonthData = SeasonalityMonthDataService
+				.RecalculateValuesBasedOnCurrentPercentages(
+					Seasonality.SeasonalitiesMonthData,
+					productVolume);
+
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 3000,
+				Summary = "Valores recalculados segundo a sazonalidade.",
+				Severity = NotificationSeverity.Success
+			});
+		}
+		catch (Exception e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 3000,
+				Summary = "Erro ao recalcular calores segundo a mudança na sazonalidade.",
+				Severity = NotificationSeverity.Error
+			});
+		}
+	}
+
+
+}

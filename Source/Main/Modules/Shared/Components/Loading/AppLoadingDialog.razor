@@ -1,0 +1,31 @@
+@inject DialogService DialogService
+
+@code {
+
+	public Task Start()
+	{
+		return DialogService.OpenAsync("",
+			ds => @<RadzenRow JustifyContent="JustifyContent.Center">
+				      <RadzenColumn Size="2">
+					      <RadzenProgressBarCircular
+						      ShowValue="false" Mode="ProgressBarMode.Indeterminate"
+						      Size="ProgressBarCircularSize.Medium">
+					      </RadzenProgressBarCircular>
+				      </RadzenColumn>
+			      </RadzenRow>
+			, new DialogOptions()
+			{
+				CloseDialogOnOverlayClick = false,
+				CloseDialogOnEsc = false,
+				ShowClose = false,
+				ShowTitle = false,
+				Style = "background-color: transparent; box-shadow: none;"
+			});
+	}
+
+	public void Stop()
+	{
+		DialogService.Close();
+	}
+
+}

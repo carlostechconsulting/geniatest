@@ -1,0 +1,12 @@
+<RadzenRow JustifyContent="JustifyContent.Start">
+	<RadzenColumn Size="12">
+		<RadzenText TextStyle="TextStyle.DisplayH5">@((MarkupString)Title)</RadzenText>
+	</RadzenColumn>
+</RadzenRow>
+
+@code {
+
+	[Parameter]
+	public string Title { get; set; } = string.Empty;
+
+}

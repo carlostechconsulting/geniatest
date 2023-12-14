@@ -1,0 +1,55 @@
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Modules.Seasonalities.Utils
+<RadzenRow JustifyContent="JustifyContent.Center">
+	<RadzenColumn Size="12">
+		<RadzenCard class="w-100 mb-4" Style="display: flex; align-items: center; gap: 0.5rem">
+			<RadzenCheckBox @bind-Value="@trend" Name="trend"></RadzenCheckBox>
+			<RadzenLabel Text="Tendência" Component="trend" Style="margin-right: 1rem;" class="rz-color-danger-dark"/>
+
+			<RadzenCheckBox @bind-Value="@mean" Name="mean"></RadzenCheckBox>
+			<RadzenLabel Text="Média" Component="mean" Style="margin-right: 1rem;" class="rz-color-success-dark"/>
+
+		</RadzenCard>
+		<RadzenChart>
+			<RadzenLineSeries Smooth="true" Data="@dataItems" Title="@Seasonality.Year.ToString()" CategoryProperty="Date" ValueProperty="Percentage">
+				<RadzenMarkers MarkerType="MarkerType.Circle"/>
+				<RadzenSeriesDataLabels Visible="true"/>
+				<RadzenSeriesTrendLine Visible="@trend" Stroke="var(--rz-danger-dark)" LineType="LineType.Dotted"/>
+				<RadzenSeriesMeanLine Visible="@mean" Stroke="var(--rz-success-dark)" LineType="LineType.Dotted"/>
+			</RadzenLineSeries>
+			<RadzenCategoryAxis Formatter="@(value => value != null ? Convert.ToDateTime(value).ToString("MMM") : string.Empty)"/>
+			<RadzenValueAxis Formatter="@(value => $"{(double)value} %")">
+				<RadzenGridLines Visible="true"/>
+				<RadzenAxisTitle Text="Sazonalidade (%)"/>
+			</RadzenValueAxis>
+		</RadzenChart>
+	</RadzenColumn>
+</RadzenRow>
+
+@code {
+
+	[Parameter] public Seasonality Seasonality { get; set; }
+	
+	
+	bool trend = true;
+	bool mean = false;
+	DataItem[] dataItems = { };
+
+	protected override void OnInitialized()
+	{
+		dataItems = Seasonality.SeasonalitiesMonthData
+			.OrderBy(i => i.MonthName)
+			.Select(data => new DataItem
+			{
+				Date = $"{SeasonalityMonthDataUtils.GetMonthNumber(data.MonthName)}-{Seasonality.Year}",
+				Percentage = data.Percentage
+			}).ToArray();
+	}
+
+	class DataItem
+	{
+		public string Date { get; set; }
+		public decimal? Percentage { get; set; }
+	}
+
+}

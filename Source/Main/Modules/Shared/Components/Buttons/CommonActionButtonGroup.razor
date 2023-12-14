@@ -1,0 +1,119 @@
+@using GeniaWebApp.Source.Main.Modules.Shared.Utils
+
+
+<i class="material-icons"></i>
+<RadzenColumn Size="@(Size)" SizeXS="@(SizeXS)" SizeSM="@(SizeSM)" SizeMD="@(SizeMD)" SizeLG="1" SizeXL="1" SizeXX="1"
+              Visible="ShowUndoButton">
+	<AppIconButton Icon="undo"
+	               Click="() => OnUndo.InvokeAsync()"
+	               Disabled="IsUndoDisabled"
+	               ButtonStyle="ButtonStyle.Dark"
+	               ToolTipText="Desfazer"/>
+</RadzenColumn>
+<RadzenColumn Size="@(Size)" SizeXS="@(SizeXS)" SizeSM="@(SizeSM)" SizeMD="@(SizeMD)" SizeLG="1" SizeXL="1" SizeXX="1"
+              Visible="ShowCleanButton">
+	<AppCleanButton Disabled="IsCleanDisabled" Click="() => OnClean.InvokeAsync()"/>
+</RadzenColumn>
+<RadzenColumn Size="@(Size)" SizeXS="@(SizeXS)" SizeSM="@(SizeSM)" SizeMD="@(SizeMD)" SizeLG="1" SizeXL="1" SizeXX="1"
+              Visible="ShowResetSeasonalityButton">
+	<AppIconButton Icon="restore_page" ButtonStyle="ButtonStyle.Warning"
+	               Click="@(() => OnResetSeasonality.InvokeAsync())"
+	               Disabled="IsResetSeasonalityDisabled"
+	               ToolTipText="Resetar Sazonalidade"/>
+</RadzenColumn>
+<RadzenColumn Size="@(Size)" SizeXS="@(SizeXS)" SizeSM="@(SizeSM)" SizeMD="@(SizeMD)" SizeLG="1" SizeXL="1" SizeXX="1"
+              Visible="ShowViewButton">
+	<AppVisualizeButton Disabled="IsViewDisabled" Click="() => OnView.InvokeAsync()"/>
+</RadzenColumn>
+<RadzenColumn Size="@(Size)" SizeXS="@(SizeXS)" SizeSM="@(SizeSM)" SizeMD="@(SizeMD)" SizeLG="1" SizeXL="1" SizeXX="1"
+              Visible="ShowSaveButton">
+	<AppSaveButton Disabled="IsSaveDisabled" Click="() => OnSave.InvokeAsync()"/>
+</RadzenColumn>
+<RadzenColumn Size="@(Size)" SizeXS="@(SizeXS)" SizeSM="@(SizeSM)" SizeMD="@(SizeMD)" SizeLG="1" SizeXL="1" SizeXX="1"
+              Visible="ShowDeleteButton">
+	<AppDeleteButton Disabled="IsDeleteDisabled" Click="() => OnDelete.InvokeAsync()"/>
+</RadzenColumn>
+<RadzenColumn Size="@(Size)" SizeXS="@(SizeXS)" SizeSM="@(SizeSM)" SizeMD="@(SizeMD)" SizeLG="1" SizeXL="1" SizeXX="1"
+              Visible="ShowProjectModelingButton">
+	<AppIconButton Icon="miscellaneous_services"
+	               Click="() => OnProjectModeling.InvokeAsync()"
+	               Disabled="IsProjectModelingDisabled"
+	               ButtonStyle="ButtonStyle.Light"
+	               ToolTipText="Ir para configurações de produtos"/>
+</RadzenColumn>
+<RadzenColumn Size="@(Size)" SizeXS="@(SizeXS)" SizeSM="@(SizeSM)" SizeMD="1" SizeLG="1" SizeXL="1" SizeXX="1"
+              Visible="ShowLockButton">
+	<RadzenButton
+		IconColor="@(IsLocked ? "gray" : "#3F3D88")"
+		Variant="Variant.Flat"
+		Disabled="IsLockDisabled"
+		Click="() => OnLock.InvokeAsync()"
+		Icon="@(IsLocked ? "lock_outline" : "lock_open")" ButtonStyle="ButtonStyle.Light"
+		MouseEnter="@(args => ShowTooltip(args, IsLocked ? "Desbloquear" : "Bloquear"))"/>
+</RadzenColumn>
+
+@inject TooltipService TooltipService
+
+@code {
+
+	int Size = 4;
+	int SizeXS = 4;
+	int SizeSM = 3;
+	int SizeMD = 2;
+
+	[Parameter] public bool IsSaveDisabled { get; set; }
+
+	[Parameter] public bool ShowSaveButton { get; set; }
+
+	[Parameter] public bool IsCleanDisabled { get; set; }
+
+	[Parameter] public bool ShowCleanButton { get; set; }
+
+	[Parameter] public bool IsDeleteDisabled { get; set; }
+
+	[Parameter] public bool ShowDeleteButton { get; set; }
+
+	[Parameter] public bool IsViewDisabled { get; set; }
+
+	[Parameter] public bool ShowViewButton { get; set; }
+
+	[Parameter] public bool IsProjectModelingDisabled { get; set; }
+
+	[Parameter] public bool ShowProjectModelingButton { get; set; }
+
+	[Parameter] public bool IsLockDisabled { get; set; }
+
+	[Parameter] public bool IsLocked { get; set; }
+
+	[Parameter] public bool ShowLockButton { get; set; }
+
+	[Parameter] public bool IsResetSeasonalityDisabled { get; set; }
+
+	[Parameter] public bool ShowResetSeasonalityButton { get; set; }
+
+	[Parameter] public bool ShowUndoButton { get; set; }
+	[Parameter] public bool IsUndoDisabled { get; set; }
+
+	[Parameter] public EventCallback OnSave { get; set; }
+
+	[Parameter] public EventCallback OnClean { get; set; }
+
+	[Parameter] public EventCallback OnDelete { get; set; }
+
+	[Parameter] public EventCallback OnView { get; set; }
+
+	[Parameter] public EventCallback OnProjectModeling { get; set; }
+
+	[Parameter] public EventCallback OnResetSeasonality { get; set; }
+
+	[Parameter] public EventCallback OnLock { get; set; }
+
+	[Parameter] public EventCallback OnUndo { get; set; }
+
+	void ShowTooltip(ElementReference elementReference, string text) => TooltipService
+		.Open(
+			elementReference,
+			text,
+			ToolTipDefaultConfig.GetTooltipOptions());
+
+}

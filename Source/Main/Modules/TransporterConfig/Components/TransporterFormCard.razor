@@ -1,0 +1,134 @@
+@using GeniaWebApp.Extentions
+@using GeniaWebApp.Resource
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Data.Models.Genia.EnumTypes
+@using GeniaWebApp.Source.Main.Exceptions
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Alerts
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Autocomplete
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Buttons
+@using GeniaWebApp.Source.Main.Modules.TransporterConfig.Services
+
+<AppFormAlerts AlertMessages="AlertMessages"/>
+
+<RadzenRow JustifyContent="JustifyContent.Stretch" class="mb-3">
+	<RadzenColumn Size="1">
+		<AppSaveButton Click="Save"/>
+	</RadzenColumn>
+</RadzenRow>
+<RadzenRow JustifyContent="JustifyContent.Stretch">
+	<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="4" SizeLG="4" SizeXL="4" SizeXX="4">
+		<RadzenFormField Text="Nome">
+			<RadzenTextBox
+				Change="CleanValidation"
+				@bind-Value=@Transporter.Name/>
+		</RadzenFormField>
+	</RadzenColumn>
+	<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="4" SizeLG="4" SizeXL="4" SizeXX="4">
+		<RadzenFormField Text="Volume">
+			<RadzenNumeric
+				TValue="decimal?"
+				ShowUpDown="false"
+				Min="Decimal.Zero"
+				Format="n2"
+				Change="CleanValidation"
+				@bind-Value=@Transporter.Volume/>
+		</RadzenFormField>
+	</RadzenColumn>
+	<RadzenColumn SizeXS="12" SizeSM="12" SizeMD="4" SizeLG="4" SizeXL="4" SizeXX="4">
+		<ModalTypeSelector ModalType="@Transporter.ApplicableModalType"
+		                   ModalTypeChanged="UpdateModalType"/>
+	</RadzenColumn>
+
+
+</RadzenRow>
+
+
+@inject TransporterService TransporterService
+@inject NotificationService NotificationService
+@inject IStringLocalizer<AppLang> Trans
+@inject NavigationManager NavigationManager
+
+@code {
+
+	[Parameter]
+	public Transporter Transporter { get; set; } = new();
+
+	/*
+	 * Component state
+	 */
+	ICollection<string> AlertMessages = new List<string>();
+
+	void Save()
+	{
+		if (!AreInputsValid())
+			return;
+
+		try
+		{
+			string message;
+			if (Transporter.Id.IsEmpty())
+			{
+				TransporterService.Create(Transporter);
+				message = "Criado com sucesso";
+			}
+			else
+			{
+				TransporterService.Update(Transporter);
+				message = "Atualizado com sucesso";
+			}
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 4000,
+				Summary = $"Transportador \"{Transporter.Name}\" {message}",
+				Severity = NotificationSeverity.Success,
+			});
+			NavigationManager.NavigateTo("/transporters-config");
+		}
+		catch (GeniaConstraintException e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 8000,
+				Summary = Trans[e.TransKey],
+				Severity = NotificationSeverity.Error,
+			});
+		}
+		catch (GeniaGenericException e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 8000,
+				Summary = Trans[e.TransKey],
+				Severity = NotificationSeverity.Error,
+			});
+		}
+	}
+
+	private bool AreInputsValid()
+	{
+		AlertMessages.Clear();
+		Transporter.Name.IfHasContentOrElse(
+			(v) => { },
+			() => AlertMessages.Add("<li><b>Nome</b> é obrigatório</li>"));
+		Transporter.Volume.IfHasValueOrElse(
+			(v) => { },
+			() => AlertMessages.Add("<li><b>Volume</b> é obrigatório</li>"));
+		Transporter.ApplicableModalType.IfHasValueOrElse(
+			(v) => { },
+			() => AlertMessages.Add("<li><b>Modal aplicável</b> é obrigatório</li>"));
+
+		StateHasChanged();
+		return AlertMessages.Empty();
+	}
+
+	private void CleanValidation()
+	{
+		AlertMessages.Clear();
+	}
+	private void UpdateModalType(ModalTypes? modalType)
+	{
+		if (modalType.HasValue) Transporter.ApplicableModalType = modalType;
+		
+		CleanValidation();
+	}
+}

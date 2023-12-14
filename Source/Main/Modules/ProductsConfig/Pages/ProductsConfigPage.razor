@@ -1,0 +1,110 @@
+@page "/products-config"
+@using GeniaWebApp.Source.Main.Modules.ProductsConfig.Components
+@using GeniaWebApp.Source.Main.Modules.Shared.Components
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Autocomplete
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Data.Repository
+@using GeniaWebApp.Extentions
+
+<PageTitle>Configuração de produtos</PageTitle>
+
+<RadzenRow JustifyContent="JustifyContent.Stretch" class="mb-4">
+	<RadzenBreadCrumb>
+		<RadzenBreadCrumbItem Path="/" Text="Inicio"/>
+		<RadzenBreadCrumbItem Text="Configurações de produtos"/>
+	</RadzenBreadCrumb>
+</RadzenRow>
+
+<RadzenRow JustifyContent="JustifyContent.Stretch" Style="margin-top: 15px">
+	<RadzenColumn SizeXS="1">
+		<RadzenButton
+			Variant="Variant.Filled"
+			Icon="add"
+			Click=@(args => NavigationManager.NavigateTo("/products-config/create"))
+			ButtonStyle="ButtonStyle.Primary"/>
+	</RadzenColumn>
+</RadzenRow>
+<RadzenRow JustifyContent="JustifyContent.Stretch" Style="margin-top: 15px">
+			<RadzenColumn Size="12">
+    			<ProductConfigAutocomplete OnValueChanged="ApplyFilter"/>
+    		</RadzenColumn>
+	<RadzenColumn Size="12">
+		<RadzenCard>
+			@if (ProductsConfigs.HasAny())
+			{
+				<RadzenDataList @ref="RadzenDataListRef" AllowVirtualization=@allowVirtualization Style="@(allowVirtualization ? "height:400px;overflow:auto;" : "")"
+				                WrapItems="@(!allowVirtualization)" AllowPaging="@(!allowVirtualization)"
+				                Density="Density.Compact"
+				                PagerPosition="PagerPosition.TopAndBottom"
+				                Data="@ProductsConfigs" TItem="ProductConfig" PageSize="2" PagerHorizontalAlign="HorizontalAlign.Right">
+					<Template Context="productConfig">
+						<ProductConfigCard OnChanged="OnProductsChange" ProductConfig="productConfig"/>
+					</Template>
+				</RadzenDataList>
+			}
+			else
+			{
+				<EmptyData/>
+			}
+
+		</RadzenCard>
+	</RadzenColumn>
+</RadzenRow>
+
+
+@inject ProductConfigRepo productConfigRepo
+@inject NavigationManager NavigationManager
+
+@code {
+
+	bool allowVirtualization;
+	public ProductConfig SelectedProductConfig { get; set; }
+	private IQueryable<ProductConfig> ProductsConfigs { get; set; }
+	private readonly Query QueryDefault = new() { Skip = 0, Top = 10, OrderBy = "UpdatedAt desc", Expand = "Seasonality.SeasonalitiesMonthData" };
+
+	private RadzenDataList<ProductConfig> RadzenDataListRef;
+	protected override Task OnInitializedAsync()
+	{
+		return FindAll();
+	}
+
+	private Task FindAll()
+	{
+		
+		return productConfigRepo.GetProductConfigs(QueryDefault)
+			.ContinueWith(task => { ProductsConfigs = task.Result; });
+	}
+
+	public async Task ApplyFilter(ProductConfig selected)
+	{
+		if (selected == null)
+		{
+			ProductsConfigs = await productConfigRepo.GetProductConfigs(QueryDefault);
+			return;
+		}
+
+		Query query = new()
+		{
+			Skip = 0,
+			Top = 10,
+			Expand = "Seasonality.SeasonalitiesMonthData",
+			OrderBy = "UpdatedAt desc",
+			Filter = $"Name eq \"{selected.Name}\""
+		};
+		try
+		{
+			ProductsConfigs = await productConfigRepo.GetProductConfigs(query);
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
+	}
+
+	private async void OnProductsChange(ProductConfig obj)
+	{
+		await FindAll();
+		RadzenDataListRef.GoToPage(0);
+	}
+
+}

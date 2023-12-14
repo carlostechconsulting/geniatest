@@ -1,0 +1,55 @@
+@page "/transporter-config/{TransporterId?}"
+@using GeniaWebApp.Source.Main.Modules.TransporterConfig.Components
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Modules.TransporterConfig.Services
+
+<PageTitle>Transportador</PageTitle>
+
+<RadzenBreadCrumb class="mb-4">
+	<RadzenBreadCrumbItem Path="/" Text="Inicio"/>
+	<RadzenBreadCrumbItem Path="/transporters-config" Text="Configurações de Transportador"/>
+	<RadzenBreadCrumbItem Text="@($"{(string.IsNullOrEmpty(TransporterId) ? "Novo Transportador" : $"Transportador: {Transporter?.Name}")}")"/>
+</RadzenBreadCrumb>
+
+<RadzenCard>
+	<RadzenRow JustifyContent="JustifyContent.Stretch" class="mb-3">
+		<RadzenText TextStyle="TextStyle.H6" Text="@($"{(string.IsNullOrEmpty(TransporterId) ? "Novo Transportador" : $"Transportador: {Transporter?.Name}")}")"/>
+	</RadzenRow>
+	<TransporterFormCard Transporter="@Transporter"/>
+</RadzenCard>
+
+@inject TransporterService TransporterService
+@inject NotificationService NotificationService
+
+@code {
+
+	[Parameter]
+	public string? TransporterId { get; set; }
+
+	private Transporter Transporter { get; set; } = new();
+
+	/**
+     * Component Life Cycle
+     */
+	protected override Task OnInitializedAsync()
+	{
+		if (string.IsNullOrEmpty(TransporterId))
+			return Task.CompletedTask;
+
+		return TransporterService.GetById(Convert.ToInt64(TransporterId))
+			.ContinueWith(task =>
+			{
+				if (task.Exception is not null)
+				{
+					NotificationService.Notify(new NotificationMessage()
+					{
+						Duration = 3000,
+						Summary = "Erro ao carregar transportador" + task.Exception.Message,
+						Severity = NotificationSeverity.Error
+					});
+				}
+				Transporter = task.Result;
+			});
+	}
+
+}

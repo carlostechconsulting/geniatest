@@ -1,0 +1,30 @@
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Data.Repository
+<RadzenFormField Text="Produto">
+	<RadzenDropDownDataGrid AllowClear="true" @bind-Value=Value AllowVirtualization="true"
+	                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+	                        AllowFiltering="true" Data=@Options TextProperty="Name" Change="OnChange"/>
+</RadzenFormField>
+
+@inject ProductConfigRepo repository
+
+@code {
+	IQueryable<ProductConfig> Options;
+
+	[Parameter]
+	public ProductConfig Value { get; set; }
+
+	[Parameter]
+	public EventCallback<ProductConfig> OnValueChanged { get; set; }
+
+	protected async override Task OnInitializedAsync()
+	{
+		Options = await repository.GetProductConfigs();
+	}
+
+	void OnChange()
+	{
+		OnValueChanged.InvokeAsync(Value);
+	}
+
+}

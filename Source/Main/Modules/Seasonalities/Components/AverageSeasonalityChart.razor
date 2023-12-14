@@ -1,0 +1,145 @@
+@using GeniaWebApp.Extentions
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Autocomplete
+@using GeniaWebApp.Source.Main.Data.Repository
+@using GeniaWebApp.Source.Main.Exceptions
+@using GeniaWebApp.Source.Main.Modules.Seasonalities.Models
+@using GeniaWebApp.Source.Main.Modules.Seasonalities.Utils
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Loading
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Text
+@using GeniaWebApp.Source.Main.Modules.Shared.Utils
+
+<RadzenCard>
+	<AppPageContentTitle Title="Sazonalidade média por ano"/>
+
+	<RadzenRow JustifyContent="JustifyContent.End">
+		<RadzenColumn Size="12">
+			<RadzenFormField Text="Ano">
+				<YearMultiSelector SelectedYears="SelectedYears" OnChange="@(ApplyFilter)"/>
+			</RadzenFormField>
+		</RadzenColumn>
+	</RadzenRow>
+
+	<RadzenRow JustifyContent="JustifyContent.Center">
+		<RadzenColumn Size="12">
+
+			@if (DataItemsList.HasAny())
+			{
+				<RadzenChart>
+
+					@foreach (var item in DataItemsList)
+					{
+						<RadzenLineSeries Smooth="true" Data="@item.Value" Title="@item.Key.ToString()" CategoryProperty="Date" ValueProperty="Percentage">
+							<RadzenMarkers MarkerType="MarkerType.Circle"/>
+							<RadzenSeriesDataLabels Visible="true"/>
+						</RadzenLineSeries>
+					}
+
+					<RadzenCategoryAxis Formatter="@(arg => arg != null ? Convert.ToDateTime(arg).ToString("MMM") : string.Empty)"/>
+					<RadzenValueAxis Formatter="@(value => $"{(double)value} %")">
+						<RadzenGridLines Visible="true"/>
+						<RadzenAxisTitle Text="Sazonalidade (%)"/>
+					</RadzenValueAxis>
+				</RadzenChart>
+			}
+			else
+			{
+				<RadzenRow JustifyContent="JustifyContent.Center">
+					<RadzenText Text="Sem dados para este(s) ano(s)"
+					            TextStyle="TextStyle.Subtitle1"
+					            TextAlign="TextAlign.Center"/>
+				</RadzenRow>
+			}
+		</RadzenColumn>
+	</RadzenRow>
+
+</RadzenCard>
+<AppLoadingDialog @ref="AppLoadingDialogRef"/>
+
+@inject SeasonalityRepo SeasonalityRepo
+
+@code {
+
+	private static readonly List<int> YearOptions = Enumerable.Range(1950, 2023).ToList();
+
+	/*
+	 * Component state
+	 */
+	private List<int> SelectedYears = new() { DateTime.Now.Year, DateTime.Now.Year - 1, DateTime.Now.Year - 2 };
+	private DataItem[] data = { };
+	private Dictionary<int, DataItem[]> DataItemsList = new();
+	private Boolean IsLoading;
+	private AppLoadingDialog AppLoadingDialogRef { get; set; }
+
+
+	/**
+     * Component lifecycle
+     */
+	protected override async Task OnInitializedAsync()
+	{
+		await BuildData();
+	}
+
+	/**
+     * Event handler
+     */
+	private async Task ApplyFilter(List<int> years)
+	{
+		SelectedYears = years;
+		await BuildData();
+	}
+
+	/**
+     * Fetch and build data
+     */
+	private async Task BuildData()
+	{
+		if (SelectedYears.Empty())
+		{
+			DataItemsList = new();
+			return;
+		}
+
+		try
+		{
+			Query query = new()
+			{
+				Expand = "SeasonalitiesMonthData",
+				Filter = $"Year in ({string.Join(",", SelectedYears)}) and  ProductConfigs.any()"
+			};
+
+
+			var queryable = await SeasonalityRepo.GetSeasonalities(query);
+			var seasonalities = queryable.ToList();
+
+			var groupByYear = seasonalities
+				.GroupBy(s => s.Year)
+				.ToDictionary(c => c.Key, c => c.ToList());
+
+			DataItemsList = groupByYear.Select(pair =>
+			{
+				var dictionary = pair.Value.SelectMany(s => s.SeasonalitiesMonthData)
+					.GroupBy(sd => sd.MonthName)
+					.ToDictionary(c => c.Key, c => c.Average(s => s.Percentage));
+				var dataItems = dictionary.Select(d =>
+					new DataItem
+					{
+						Date = $"{SeasonalityMonthDataUtils.GetMonthNumber(d.Key)}-{pair.Key}",
+						Percentage = DecimalUtils.Round(d.Value)
+					}).ToArray();
+				return KeyValuePair.Create(pair.Key, dataItems);
+			}).ToDictionary(i => i.Key, i => i.Value);
+		}
+		catch (Exception e)
+		{
+			throw new GeniaGenericException("Erro ao carregar dados de sazonalidade.");
+		}
+	}
+
+	private void SetLoading(Boolean isLoading)
+	{
+		IsLoading = isLoading;
+		StateHasChanged();
+	}
+	
+
+}

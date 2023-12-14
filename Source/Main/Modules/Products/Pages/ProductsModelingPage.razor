@@ -1,0 +1,344 @@
+@page "/products-modeling/{ProjectId:int}"
+@using GeniaWebApp.Extentions
+@using GeniaWebApp.Source.Main.Data.Models.Genia
+@using GeniaWebApp.Source.Main.Data.Models.Genia.EnumTypes
+@using GeniaWebApp.Source.Main.Data.Repository
+@using GeniaWebApp.Source.Main.Exceptions.Products
+@using GeniaWebApp.Source.Main.Modules.Modals.Components
+@using GeniaWebApp.Source.Main.Modules.Products.Components
+@using GeniaWebApp.Source.Main.Modules.Products.models
+@using GeniaWebApp.Source.Main.Modules.Products.Services
+@using GeniaWebApp.Source.Main.Modules.Projects.Services
+@using GeniaWebApp.Source.Main.Modules.Seasonalities.Utils
+@using GeniaWebApp.Source.Main.Modules.Shared.Components
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Buttons
+@using GeniaWebApp.Source.Main.Modules.Shared.Components.Text
+@using BlazorPro.BlazorSize
+
+<PageTitle>Modelagem de produtos</PageTitle>
+
+<AppBreadCrumbs BreadCrumbs="@BREAD_CRUMBS"/>
+
+@* Main content:START *@
+<RadzenRow JustifyContent="JustifyContent.Stretch">
+
+	<RadzenColumn Size="12" Visible="@(!IsSideDialogOpen)">
+		<RadzenCard>
+			<RadzenRow JustifyContent="JustifyContent.Stretch">
+				@foreach (var entry in TotalSharePercentages)
+				{
+					<RadzenColumn Size="6">
+						<ProjectModalSharePercentage ProgressBarStyle="@(entry.Key == FlowTypes.RECEPCAO ? ProgressBarStyle.Warning : ProgressBarStyle.Success)"
+						                             FlowTypes="entry.Key"
+						                             TotalSharePercentages="entry.Value"/>
+					</RadzenColumn>
+				}
+			</RadzenRow>
+		</RadzenCard>
+	</RadzenColumn>
+	<RadzenColumn Size="@(IsSideDialogOpen ? 10 : 12)">
+		<RadzenCard>
+			<AppPageContentTitle Title="@($"Modelagem de produtos do projeto <b>{@Project.Name}</b>")"/>
+
+			@* Page controller/filters:START *@
+			<RadzenRow JustifyContent="JustifyContent.Stretch">
+				<RadzenColumn Size="1">
+					<AppSaveButton Disabled="Project.Products.Empty()"
+					               Click="@SaveProject"/>
+				</RadzenColumn>
+				@* <RadzenColumn Size="1"> *@
+				@* output preview *@
+				@* 	<AppIconButton ButtonStyle="ButtonStyle.Light" Icon="calculate" Click="@SaveProject" ToolTipText="Calcular output"/> *@
+				@* </RadzenColumn> *@
+				<RadzenColumn Size="1">
+					@* Only export to json *@
+					<AppIconButton Disabled="Project.Products.Empty()"
+					               ButtonStyle="ButtonStyle.Light"
+					               Icon="file_download"
+					               Click="@ExportOutput"
+					               ToolTipText="Exportar output"/>
+				</RadzenColumn>
+			</RadzenRow>
+			@* Page controller/filters:END *@
+			@* Products/Modals modeling content:START *@
+
+			@* Add product button *@
+			<RadzenRow JustifyContent="JustifyContent.Center">
+				<RadzenColumn Size="1">
+					<AppProductModelingButton ToolTipText="Adicionar produto" Click=@(args => AddProduct())/>
+				</RadzenColumn>
+			</RadzenRow>
+			<RadzenTree>
+				@foreach (var product in Project.Products)
+				{
+					<RadzenTreeItem>
+						<ChildContent>
+							<RadzenRow class="ml-2 mb-2 mt-2" JustifyContent="JustifyContent.Center">
+								<RadzenColumn Size="1">
+									<AppProductModelingButton
+										ToolTipText=@($"Adicionar <b>modelo</b> ao produto <b>{product.Name}</b>")
+										Click=@(args => AddModalInProduct(product))/>
+								</RadzenColumn>
+							</RadzenRow>
+							@* Models *@
+							@if (product.Modals.HasAny())
+							{
+								<RadzenRow JustifyContent="JustifyContent.Center">
+									@foreach (var modal in product.Modals)
+									{
+										<RadzenColumn Size="11">
+											<ModalCard Modal="modal"
+											           Project="Project"
+											           OnModalDeletedOrSaved="UpdateAfterModalDeletedOrSaved"
+											           OnShareChange=@(arg => RecalculateSharesAfterChange(product, arg))/>
+										</RadzenColumn>
+									}
+								</RadzenRow>
+							}
+						</ChildContent>
+						<Template>
+							@* Products *@
+							<RadzenRow JustifyContent="JustifyContent.Stretch">
+								<RadzenColumn Size="12">
+									<ProductCard
+										OnDeleted="AfterProductRemoved"
+										OnVolumeChange=@(args => RecalculateSharesAfterChange(product, null))
+										IsSideDialogOpen="IsSideDialogOpen" Product="product">
+									</ProductCard>
+								</RadzenColumn>
+							</RadzenRow>
+						</Template>
+					</RadzenTreeItem>
+				}
+			</RadzenTree>
+			@if (Project.Products.Empty())
+			{
+				<EmptyData/>
+			}
+			@* Products/Modals modeling content:END *@
+		</RadzenCard>
+	</RadzenColumn>
+
+	<RadzenColumn Size="2" Visible="IsSideDialogOpen">
+		<RadzenCard class="popup">
+			<RadzenRow JustifyContent="JustifyContent.Stretch">
+				@foreach (var entry in TotalSharePercentages)
+				{
+					<RadzenColumn Size="12">
+						<ProjectModalSharePercentage ProgressBarStyle="@(entry.Key == FlowTypes.RECEPCAO ? ProgressBarStyle.Warning : ProgressBarStyle.Success)"
+						                             FlowTypes="entry.Key"
+						                             TotalSharePercentages="entry.Value"/>
+					</RadzenColumn>
+				}
+			</RadzenRow>
+		</RadzenCard>
+	</RadzenColumn>
+
+</RadzenRow>
+
+@* Main content:END *@
+<style>
+	.popup {
+        position: -webkit-sticky; /* Safari */
+        position: sticky;
+        top: 0;
+        min-width: 200px
+    }
+</style>
+
+@inject ProjectRepo ProjectRepo
+@inject NotificationService NotificationService
+@inject ProductShareService ProductShareService
+@inject ProjectShareService ProjectShareService
+@inject IResizeListener ResizeListener
+@inject ProjectFileExporterService ProjectFileExporterService
+@inject ProjectService ProjectService
+
+@code {
+
+	private static readonly Dictionary<string, string> BREAD_CRUMBS = new()
+	{
+		{ "/", "Inicio" },
+		{ "/projects", "Lista de projetos" },
+		{ string.Empty, "Modelagem de produtos" }
+	};
+
+	[Parameter] public int ProjectId { get; set; }
+
+	/**
+     * Component state
+     */
+	private Project Project { get; set; }
+
+	private Boolean IsSideDialogOpen { get; set; } = true;
+	private Dictionary<FlowTypes, TotalSharePercentages> TotalSharePercentages = new();
+
+
+	/// Life cycle method
+	protected override Task OnInitializedAsync()
+	{
+		ResizeListener.OnResized += OnScreenResized;
+		return FetchAll();
+	}
+
+	/// Fetch project data
+	private Task FetchAll()
+	{
+		return ProjectRepo.GetProjectWithChildrenById(ProjectId)
+			.ContinueWith(task =>
+			{
+				if (task.Exception is not null)
+				{
+					NotificationService.Notify(new NotificationMessage()
+					{
+						Duration = 8000,
+						Summary = $"Error when trying to get project with id {ProjectId}",
+						Severity = NotificationSeverity.Error
+					});
+				}
+				else
+				{
+					try
+					{
+						Project = task.Result;
+						Project.Products = Project.Products
+							.Select(product => ProductShareService.CalculateSharesByProduct(product))
+							.ToList();
+
+						TotalSharePercentages = ProjectShareService.CalculateGlobalSharePercentagesByFlowType(Project);
+					}
+					catch (ProductSharesRecalculationException sharedException)
+					{
+						Console.WriteLine(sharedException.Message);
+					}
+					catch (Exception e)
+					{
+						Console.WriteLine(e.Message);
+					}
+				}
+			});
+	}
+
+
+	/// reorganize components when screen is resized
+	private void OnScreenResized(object sender, BrowserWindowSize data)
+	{
+		if (data.Width < 1500)
+		{
+			if (IsSideDialogOpen)
+			{
+				IsSideDialogOpen = false;
+				StateHasChanged();
+			}
+		}
+		else
+		{
+			if (!IsSideDialogOpen)
+			{
+				IsSideDialogOpen = true;
+				StateHasChanged();
+			}
+		}
+	}
+
+
+	/// Add modal to product
+	private void AddModalInProduct(Product? product)
+	{
+		product.Modals ??= new List<Modal>();
+		product.Modals.Insert(0, new Modal()
+		{
+			Product = product,
+			ProductId = product.Id,
+			TremTipo = null,
+			Seasonality = SeasonalityMonthDataUtils.GetDefaultSeasonality()
+		});
+	}
+
+	/// Add product to project
+	private Task AddProduct()
+	{
+		Project.Products.Insert(0, new Product()
+		{
+			ProjectId = ProjectId,
+			Seasonality = SeasonalityMonthDataUtils.GetDefaultSeasonality()
+		});
+		return Task.CompletedTask;
+	}
+
+	/// recalculate shared and set global share percentages
+	void RecalculateSharesAfterChange(Product product, Dictionary<FlowTypes, TotalSharePercentages> totalSharePercentages)
+	{
+		try
+		{
+			product = ProductShareService.CalculateSharesByProduct(product);
+			TotalSharePercentages = totalSharePercentages;
+		}
+		catch (Exception e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 8000,
+				Summary = $"Error when trying to recalculate shares by product {product.Name}",
+				Severity = NotificationSeverity.Error
+			});
+		}
+	}
+
+	/// Save project
+	private Task SaveProject()
+	{
+		return ProjectService.Update(Project)
+			.ContinueWith(task =>
+			{
+				if (task.Exception is not null)
+				{
+					NotificationService.Notify(new NotificationMessage()
+					{
+						Duration = 8000,
+						Summary = $"Error when trying to recalculate shares by product {Project.Name}",
+						Severity = NotificationSeverity.Error
+					});
+				}
+				else
+				{
+					NotificationService.Notify(new NotificationMessage()
+					{
+						Duration = 8000,
+						Summary = $"Projeto {Project.Name} salvo com sucesso",
+						Severity = NotificationSeverity.Success
+					});
+				}
+			});
+	}
+
+	private async void ExportOutput()
+	{
+		try
+		{
+			await ProjectFileExporterService.ExportJson(Project,
+				$"{Project.Name}-{DateTime.Now.ToString()}");
+		}
+		catch
+			(Exception e)
+		{
+			NotificationService.Notify(new NotificationMessage()
+			{
+				Duration = 8000,
+				Summary = $"Erro ao exportar output do projeto {Project.Name}",
+				Severity = NotificationSeverity.Success
+			});
+		}
+	}
+
+	private async void UpdateAfterModalDeletedOrSaved()
+	{
+		await FetchAll();
+	}
+
+	private async void AfterProductRemoved(Product product)
+	{
+		await FetchAll();
+	}
+
+}

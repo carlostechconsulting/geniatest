@@ -1,0 +1,13 @@
+<AppIconButton Icon="cleaning_services" ButtonStyle="ButtonStyle.Info"
+               Click="@(() => Click.InvokeAsync())"
+               Disabled="Disabled"
+               IconColor="black"
+               ToolTipText="Limpar" />
+
+@code {
+	[Parameter]
+	public bool Disabled { get; set; }
+
+	[Parameter]
+	public EventCallback Click { get; set; }
+}

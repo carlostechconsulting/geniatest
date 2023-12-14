@@ -1,0 +1,19 @@
+@page "/"
+@using GeniaWebApp.Source.Main.Modules.Seasonalities.Components
+@using GeniaWebApp.Source.Main.Modules.Dashboard.Components
+<PageTitle>Genia: Dashboard</PageTitle>
+
+<RadzenRow JustifyContent="JustifyContent.Stretch" class="mb-2">
+	<RadzenColumn Size="4">
+		<SharePercentagesByProduct />
+	</RadzenColumn>
+	<RadzenColumn Size="6">
+		<TotalSharePercentagesByProject />
+	</RadzenColumn>
+</RadzenRow>
+
+<RadzenRow JustifyContent="JustifyContent.Stretch">
+	<RadzenColumn Size="12">
+		<AverageSeasonalityChart/>
+	</RadzenColumn>
+</RadzenRow>

@@ -1,0 +1,15 @@
+<AppIconButton Icon="visibility" ButtonStyle="ButtonStyle.Secondary"
+               Click="@(() => Click.InvokeAsync())"
+               Disabled="Disabled"
+               ToolTipText="Visualizar/Editar"/>
+
+@code {
+
+	[Parameter]
+	public bool Disabled { get; set; }
+
+	[Parameter]
+	public EventCallback Click { get; set; }
+
+
+}

@@ -1,0 +1,37 @@
+@using GeniaWebApp.Resource
+<RadzenRow JustifyContent="JustifyContent.Stretch">
+	<RadzenColumn Size="12">
+		@((MarkupString)Text)
+	</RadzenColumn>
+</RadzenRow>
+<RadzenRow JustifyContent="JustifyContent.Center">
+	<RadzenColumn Size="6">
+		<RadzenButton
+			Click=@(v => Canceled.InvokeAsync(v))
+			Size="ButtonSize.Small"
+			Text="@Trans["cancel"]" ButtonStyle="ButtonStyle.Light"/>
+	</RadzenColumn>
+	<RadzenColumn Size="6">
+		<RadzenButton
+			Style="float: right"
+			Size="ButtonSize.Small"
+			Click=@(v => Confirmed.InvokeAsync(v))
+
+			Text="@Trans["changeConfirmation"]" ButtonStyle="ButtonStyle.Primary"/>
+	</RadzenColumn>
+</RadzenRow>
+
+@inject IStringLocalizer<AppLang> Trans
+
+@code {
+
+	[Parameter]
+	public string Text { get; set; }
+
+	[Parameter]
+	public EventCallback Confirmed { get; set; }
+
+	[Parameter]
+	public EventCallback Canceled { get; set; }
+
+}

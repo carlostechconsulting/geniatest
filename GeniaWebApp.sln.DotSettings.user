@@ -1,0 +1,19 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1062510d_002Deeda_002D4dea_002Dab86_002D916c043b2740/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Seasonality should be converted to dictionary" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;NUnit3x::0BD297E3-2032-418D-8330-A68D79AB8409::net7.0::Tests.Tests.Test1&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::0BD297E3-2032-418D-8330-A68D79AB8409::net7.0::Tests.Services.ProductShareServiceTest.CalculateShares&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::0BD297E3-2032-418D-8330-A68D79AB8409::net7.0::Tests.Services.ProductShareServiceTest.ValidatePercentagesByFlowType&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::0BD297E3-2032-418D-8330-A68D79AB8409::net7.0::Tests.Services.ProductShareServiceTest.ValidatePercentagesByModalType&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::0BD297E3-2032-418D-8330-A68D79AB8409::net7.0::Tests.Services.ProductShareServiceTest.CalculateSharesInProduct&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::0BD297E3-2032-418D-8330-A68D79AB8409::net7.0::Tests.Services.ProductShareServiceTest.CalculateSharesWithValidation&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::0BD297E3-2032-418D-8330-A68D79AB8409::net7.0::Tests.Services.ProductShareServiceTest.CalculateGlobalSharePercentagesByFlowType&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::0BD297E3-2032-418D-8330-A68D79AB8409::net7.0::Tests.Services.ProductShareServiceTest&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::0BD297E3-2032-418D-8330-A68D79AB8409::net7.0::Tests.Services.SeasonalityMonthDataServiceTest&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::0BD297E3-2032-418D-8330-A68D79AB8409::net7.0::Tests.Services.ProjectShareServiceTest.GetGroupByFlowThenType&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	
+	<s:Boolean x:Key="/Default/ResxEditorPersonal/CheckedGroups/=GeniaWebApp_002FResource_002FAppLang/@EntryIndexedValue">True</s:Boolean>
+	
+	<s:Boolean x:Key="/Default/ResxEditorPersonal/Initialized/@EntryValue">True</s:Boolean></wpf:ResourceDictionary>

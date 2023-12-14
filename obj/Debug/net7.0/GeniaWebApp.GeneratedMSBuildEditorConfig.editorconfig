@@ -1,0 +1,309 @@
+is_global = true
+build_property.TargetFramework = net7.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = GeniaWebApp
+build_property.RootNamespace = GeniaWebApp
+build_property.ProjectDir = /home/cmelo/CARLOS/projects/GeniaWebApp/
+build_property.RazorLangVersion = 7.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = /home/cmelo/CARLOS/projects/GeniaWebApp
+build_property._RazorSourceGeneratorDebug = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/FeatureToggleConfig/Pages/FeatureToggleConfigPage.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9GZWF0dXJlVG9nZ2xlQ29uZmlnL1BhZ2VzL0ZlYXR1cmVUb2dnbGVDb25maWdQYWdlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Modals/Components/ModalCard.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Nb2RhbHMvQ29tcG9uZW50cy9Nb2RhbENhcmQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/ProductsConfig/Components/ProductConfigCard.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Qcm9kdWN0c0NvbmZpZy9Db21wb25lbnRzL1Byb2R1Y3RDb25maWdDYXJkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/ProductsConfig/Pages/ProductConfigCreatePage.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Qcm9kdWN0c0NvbmZpZy9QYWdlcy9Qcm9kdWN0Q29uZmlnQ3JlYXRlUGFnZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/ProductsConfig/Pages/ProductsConfigPage.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Qcm9kdWN0c0NvbmZpZy9QYWdlcy9Qcm9kdWN0c0NvbmZpZ1BhZ2UucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Products/Components/AppProductModelingButton.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Qcm9kdWN0cy9Db21wb25lbnRzL0FwcFByb2R1Y3RNb2RlbGluZ0J1dHRvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Products/Components/DialogSideContent.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Qcm9kdWN0cy9Db21wb25lbnRzL0RpYWxvZ1NpZGVDb250ZW50LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Products/Components/ModalOutput.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Qcm9kdWN0cy9Db21wb25lbnRzL01vZGFsT3V0cHV0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Products/Components/ProductCard.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Qcm9kdWN0cy9Db21wb25lbnRzL1Byb2R1Y3RDYXJkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Products/Components/ProductOutput.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Qcm9kdWN0cy9Db21wb25lbnRzL1Byb2R1Y3RPdXRwdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Products/Components/ProductSummaryCard.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Qcm9kdWN0cy9Db21wb25lbnRzL1Byb2R1Y3RTdW1tYXJ5Q2FyZC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Products/Components/ProjectModalSharePercentage.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Qcm9kdWN0cy9Db21wb25lbnRzL1Byb2plY3RNb2RhbFNoYXJlUGVyY2VudGFnZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Products/Pages/ProductsModelingPage.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Qcm9kdWN0cy9QYWdlcy9Qcm9kdWN0c01vZGVsaW5nUGFnZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Projects/Components/ProjectForm.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Qcm9qZWN0cy9Db21wb25lbnRzL1Byb2plY3RGb3JtLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Projects/Pages/ProjectPage.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Qcm9qZWN0cy9QYWdlcy9Qcm9qZWN0UGFnZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Projects/Pages/ProjectsPage.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Qcm9qZWN0cy9QYWdlcy9Qcm9qZWN0c1BhZ2UucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Seasonalities/Components/AverageSeasonalityChart.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TZWFzb25hbGl0aWVzL0NvbXBvbmVudHMvQXZlcmFnZVNlYXNvbmFsaXR5Q2hhcnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Seasonalities/Components/SeasonalityCard.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TZWFzb25hbGl0aWVzL0NvbXBvbmVudHMvU2Vhc29uYWxpdHlDYXJkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Seasonalities/Components/SeazonalityChartCard.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TZWFzb25hbGl0aWVzL0NvbXBvbmVudHMvU2Vhem9uYWxpdHlDaGFydENhcmQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Buttons/CommonActionButtonGroup.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9CdXR0b25zL0NvbW1vbkFjdGlvbkJ1dHRvbkdyb3VwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/TransporterConfig/Components/TransporterFormCard.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9UcmFuc3BvcnRlckNvbmZpZy9Db21wb25lbnRzL1RyYW5zcG9ydGVyRm9ybUNhcmQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/TransporterConfig/Components/TremTipoFormCard.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/TransporterConfig/Pages/TransporterConfigPage.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9UcmFuc3BvcnRlckNvbmZpZy9QYWdlcy9UcmFuc3BvcnRlckNvbmZpZ1BhZ2UucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/TransporterConfig/Pages/TransportersConfigPage.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9UcmFuc3BvcnRlckNvbmZpZy9QYWdlcy9UcmFuc3BvcnRlcnNDb25maWdQYWdlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/TremTipoConfig/Components/TremTipoFormCard.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9UcmVtVGlwb0NvbmZpZy9Db21wb25lbnRzL1RyZW1UaXBvRm9ybUNhcmQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/TremTipoConfig/Pages/TremTipoConfigPage.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9UcmVtVGlwb0NvbmZpZy9QYWdlcy9UcmVtVGlwb0NvbmZpZ1BhZ2UucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/TremTipoConfig/Pages/TremTiposConfigPage.razor]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9UcmVtVGlwb0NvbmZpZy9QYWdlcy9UcmVtVGlwb3NDb25maWdQYWdlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/stylecop.json]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Dashboard/Components/SharePercentagesByProduct.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9EYXNoYm9hcmQvQ29tcG9uZW50cy9TaGFyZVBlcmNlbnRhZ2VzQnlQcm9kdWN0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Dashboard/Components/TotalSharePercentagesByProject.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9EYXNoYm9hcmQvQ29tcG9uZW50cy9Ub3RhbFNoYXJlUGVyY2VudGFnZXNCeVByb2plY3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Dashboard/Pages/DashboardPage.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9EYXNoYm9hcmQvUGFnZXMvRGFzaGJvYXJkUGFnZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Products/Pages/ProductPage.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Qcm9kdWN0cy9QYWdlcy9Qcm9kdWN0UGFnZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Projects/Components/ProjectInconsistencies.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9Qcm9qZWN0cy9Db21wb25lbnRzL1Byb2plY3RJbmNvbnNpc3RlbmNpZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Alerts/AppFormAlerts.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9BbGVydHMvQXBwRm9ybUFsZXJ0cy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/AppBreadCrumbs.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9BcHBCcmVhZENydW1icy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Autocomplete/ModalTypeSelector.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9BdXRvY29tcGxldGUvTW9kYWxUeXBlU2VsZWN0b3IucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Autocomplete/ProductConfigAutocomplete.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9BdXRvY29tcGxldGUvUHJvZHVjdENvbmZpZ0F1dG9jb21wbGV0ZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Autocomplete/ProductConfigImport.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9BdXRvY29tcGxldGUvUHJvZHVjdENvbmZpZ0ltcG9ydC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Autocomplete/ProductSelector.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9BdXRvY29tcGxldGUvUHJvZHVjdFNlbGVjdG9yLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Autocomplete/ProjectSelector.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9BdXRvY29tcGxldGUvUHJvamVjdFNlbGVjdG9yLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Autocomplete/TremTipoAutocomplete.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9BdXRvY29tcGxldGUvVHJlbVRpcG9BdXRvY29tcGxldGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Autocomplete/YearMultiSelector.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9BdXRvY29tcGxldGUvWWVhck11bHRpU2VsZWN0b3IucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Buttons/AppAddButton.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9CdXR0b25zL0FwcEFkZEJ1dHRvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Buttons/AppCleanButton.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9CdXR0b25zL0FwcENsZWFuQnV0dG9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Buttons/AppDeleteButton.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9CdXR0b25zL0FwcERlbGV0ZUJ1dHRvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Buttons/AppIconButton.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9CdXR0b25zL0FwcEljb25CdXR0b24ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Buttons/AppSaveButton.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9CdXR0b25zL0FwcFNhdmVCdXR0b24ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Buttons/AppTextButton.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9CdXR0b25zL0FwcFRleHRCdXR0b24ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Buttons/AppVisualizeButton.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9CdXR0b25zL0FwcFZpc3VhbGl6ZUJ1dHRvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Dialog/ActionConfirmationDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9EaWFsb2cvQWN0aW9uQ29uZmlybWF0aW9uRGlhbG9nLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Dimension/DimensionCard.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9EaW1lbnNpb24vRGltZW5zaW9uQ2FyZC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/EmptyData.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9FbXB0eURhdGEucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Errors/GenericError.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9FcnJvcnMvR2VuZXJpY0Vycm9yLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/LangSelector.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9MYW5nU2VsZWN0b3IucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Loading/AppLoadingDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9Mb2FkaW5nL0FwcExvYWRpbmdEaWFsb2cucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/Components/Text/AppPageContentTitle.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvQ29tcG9uZW50cy9UZXh0L0FwcFBhZ2VDb250ZW50VGl0bGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Source/Main/Modules/Shared/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U291cmNlL01haW4vTW9kdWxlcy9TaGFyZWQvTWFpbkxheW91dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/cmelo/CARLOS/projects/GeniaWebApp/Pages/_Host.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvX0hvc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 

@@ -1,0 +1,37 @@
+<RadzenButton
+	Variant="Variant.Text"
+	Click="() => Click.InvokeAsync()"
+	ButtonStyle="ButtonStyle.Primary"
+	MouseEnter="@(args => {if (!Disabled && !string.IsNullOrEmpty(ToolTipText)) ShowTooltip(args, ToolTipText);})">
+	<RadzenIcon Icon="add_circle_outline" style="font-weight: 500; font-size: 25pt"/>
+</RadzenButton>
+
+@inject TooltipService TooltipService
+
+@code {
+
+	[Parameter]
+	public bool Disabled { get; set; }
+
+	[Parameter]
+	public string ToolTipText { get; set; }
+
+	[Parameter]
+	public EventCallback Click { get; set; }
+
+
+	private static readonly TooltipOptions TooltipOptions = new()
+	{
+		Delay = 0,
+		Position = TooltipPosition.Bottom,
+		Duration = 2000,
+		Style = "background-color: gray; font-size: 10pt"
+	};
+
+	void ShowTooltip(ElementReference elementReference, string text) => TooltipService
+		.Open(
+			elementReference,
+			text,
+			TooltipOptions);
+
+}

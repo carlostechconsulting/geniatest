@@ -1,0 +1,37 @@
+@using System.Runtime.InteropServices.JavaScript
+@using GeniaWebApp.Source.Main.Modules.Shared.Services
+@inject ILogger<JSType.Error> Logger
+
+<RadzenRow JustifyContent="JustifyContent.Stretch">
+	<RadzenColumn Size="12">
+		<RadzenAlert Variant="Variant.Flat" AlertStyle="AlertStyle.Danger" Shade="Shade.Lighter"
+		             Size="AlertSize.Large" AllowClose=false>
+			<p>Ocorreu um erro fatal no sistema. Por favor, entre em contato com o suporte.</p>
+			<p>Uma <b>mensagem AUTOMATICA</b> foi enviada para o time de suporte, entraremos em ação assim que possível.</p>
+		</RadzenAlert>
+	</RadzenColumn>
+</RadzenRow>
+
+@inject DiscordNotifier DiscordNotifier
+
+@code {
+
+	[Parameter] public Exception? Exception { get; set; }
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		if(Exception is null)
+			return;
+		try
+		{
+			await DiscordNotifier.PublishException(Exception);
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+			throw;
+		}
+	}
+
+}
